@@ -57,3 +57,11 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+## 🛠️ Notas de Configuración (Backend)
+Para que el catálogo de carreras y retos funcione correctamente:
+1. Asegúrate de tener el archivo `database/database.sqlite` creado.
+2. Ejecuta el comando para poblar las tablas:
+   ```bash
+   php artisan migrate:refresh --seed
