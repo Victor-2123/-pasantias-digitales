@@ -12,23 +12,19 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
-        {{-- Vite manifest puede no existir en entornos sin build; evitar llamada directa a @vite para prevenir excepciones. --}}
-        {{-- Si quieres generar el manifest ejecuta: npm install && npm run build --}}
-
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        
         <style>
             body {
                 background-color: #7a6b63;
                 font-family: 'figtree', sans-serif;
-                margin: 0;
-                padding: 0;
             }
 
             .login-container {
                 display: flex;
-                flex-direction: column;
                 min-height: 100vh;
                 align-items: center;
-                justify-content: center; /* centrar verticalmente */
+                justify-content: center;
                 background-color: #7a6b63;
                 position: relative;
                 overflow: hidden;
@@ -96,20 +92,19 @@
 
             .content-wrapper {
                 display: flex;
-                width: 90%;
-                max-width: 1300px;
+                width: 100%;
+                max-width: 1100px;
                 background: white;
                 border-radius: 0;
-                box-shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
                 overflow: hidden;
                 position: relative;
                 z-index: 10;
-                margin: 0 auto; /* asegurar centrado horizontal */
             }
 
             .login-section {
                 flex: 1;
-                padding: 80px 70px; /* más espacio => recuadro más grande */
+                padding: 60px 50px;
                 background-color: #e8ddd5;
                 display: flex;
                 flex-direction: column;
@@ -118,7 +113,7 @@
 
             .register-section {
                 flex: 1;
-                padding: 80px 70px; /* más espacio para botones */
+                padding: 60px 50px;
                 background-color: #9b8f86;
                 display: flex;
                 flex-direction: column;
@@ -137,28 +132,6 @@
                 color: white;
                 letter-spacing: 2px;
                 text-transform: uppercase;
-            }
-
-            .page-header {
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                margin-bottom: 20px;
-                position: relative;
-                z-index: 20;
-            }
-
-            .page-header h1 {
-                color: #e8ddd5;
-                font-size: 48px;
-                letter-spacing: 4px;
-                text-transform: uppercase;
-                margin: 0 0 24px 0;
-            }
-
-            /* Empujar ligeramente el panel hacia abajo respecto al centro */
-            .content-wrapper {
-                transform: translateY(28px);
             }
 
             .form-group {
@@ -183,11 +156,6 @@
                 color: #333;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 transition: box-shadow 0.3s;
-                box-sizing: border-box;
-            }
-
-            .form-input::placeholder {
-                color: #999;
             }
 
             .form-input:focus {
@@ -240,7 +208,6 @@
                 cursor: pointer;
                 font-size: 12px;
                 transition: all 0.3s;
-                text-decoration: none;
             }
 
             .forgot-password-btn:hover {
@@ -275,7 +242,6 @@
                 transition: all 0.3s;
                 text-decoration: none;
                 display: inline-block;
-                text-align: center;
             }
 
             .btn-register:hover {
@@ -287,15 +253,6 @@
                 color: #d32f2f;
                 font-size: 12px;
                 margin-top: 5px;
-            }
-
-            .session-status {
-                background-color: #d4edda;
-                color: #155724;
-                padding: 12px;
-                border-radius: 4px;
-                margin-bottom: 15px;
-                font-size: 14px;
             }
 
             @media (max-width: 768px) {
@@ -321,6 +278,36 @@
         </style>
     </head>
     <body>
-        @yield('content')
+        <div class="login-container">
+            <!-- Corner decorations -->
+            <div class="corner-decoration corner-tl-1"></div>
+            <div class="corner-decoration corner-tl-2"></div>
+            <div class="corner-decoration corner-tl-3"></div>
+            <div class="corner-decoration corner-br-1"></div>
+            <div class="corner-decoration corner-br-2"></div>
+            <div class="corner-decoration corner-br-3"></div>
+
+            <div class="content-wrapper">
+                <div class="login-title">INICIAR SESIÓN</div>
+
+                <!-- Login Section -->
+                <div class="login-section">
+                    {{ $slot }}
+                </div>
+
+                <!-- Register Section -->
+                <div class="register-section">
+                    <div class="register-title">¿AÚN NO TIENES UNA CUENTA?</div>
+                    <div class="register-buttons">
+                        <a href="{{ route('prepare-register', ['type' => 'estudiante']) }}" class="btn-register">
+                            Crear cuenta de estudiante.
+                        </a>
+                        <a href="{{ route('prepare-register', ['type' => 'maestro']) }}" class="btn-register">
+                            Crear cuenta de mentor.
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
