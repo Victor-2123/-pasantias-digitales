@@ -3,105 +3,205 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Laravel') }} - Inicio</title>
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @endif
+    <meta name="description" content="Nexus - Conecta con profesionales y descubre tu vocación real experimentando la carrera de tus sueños.">
+    <title>¡Bienvenido a Nexus!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root{--accent-start:#7C3AED;--accent-end:#FF416C;--btn-start:#FF7A7A;--btn-end:#FF3F3F;--muted:#6b7280;--card:#ffffff;--glass:rgba(255,255,255,0.7)}
-        *{box-sizing:border-box}
-        html,body{height:100%}
-        body{font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:linear-gradient(180deg,#f3f7f9 0%, #eef3f6 100%);margin:0;display:flex;align-items:center;justify-content:center;padding:28px}
-        .panel{width:100%;max-width:1100px;display:flex;border-radius:14px;overflow:hidden;box-shadow:0 18px 50px rgba(16,24,40,0.12);background:linear-gradient(180deg,#ffffff,#fbfdff)}
-        .left{flex:1;padding:56px 44px;background:linear-gradient(180deg,#fff,#fbfdff)}
-        .right{flex:1;padding:0;color:#fff;display:flex;align-items:center;justify-content:center;position:relative;background-color:#100000;background-position:center;background-size:cover;background-repeat:no-repeat}
-        .brand{font-weight:800;font-size:24px;margin-bottom:8px;color:#0f172a}
-        .subtitle{color:var(--muted);margin-bottom:18px}
-        .question{font-size:20px;font-weight:700;margin:20px 0;color:#0f172a}
-        .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
-        .card{background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(250,250,250,0.95));border:1px solid rgba(15,23,42,0.04);padding:20px;border-radius:12px;cursor:pointer;transition:transform .25s cubic-bezier(.2,.9,.3,1),box-shadow .25s;backdrop-filter:blur(6px)}
-        .card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 18px 40px rgba(15,23,42,0.08)}
-        .card.active{border-color:var(--accent-start);box-shadow:0 20px 50px rgba(124,58,237,0.12)}
-        .card-emoji{font-size:30px;margin-bottom:10px}
-        .card-title{font-weight:800;margin-bottom:6px;color:#0f172a}
-        .card-desc{color:#374151;font-size:14px;line-height:1.45}
-        .actions{display:flex;align-items:center;gap:12px;margin-top:22px}
-        .btn{padding:12px 20px;border-radius:12px;border:none;cursor:pointer;font-weight:800;letter-spacing:.2px}
-        .btn-primary{background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:#fff;box-shadow:0 10px 30px rgba(124,58,237,0.12)}
-        .btn-outline{background:transparent;border:2px solid rgba(15,23,42,0.06);color:#0f172a}
-        .login-link{margin-left:auto;color:var(--muted);text-decoration:underline;cursor:pointer}
-        /* Right panel visual */
-        .hero{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-        .hero .bg-blob{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;filter:blur(12px) brightness(0.7) saturate(0.9);transform:scale(1.03);}
-        .hero .logo{font-size:120px;font-weight:900;color:transparent;-webkit-text-stroke:2px var(--accent-end);letter-spacing:-6px;transform:translateY(6px);}
-        .hero .accent{position:absolute;left:6%;bottom:8%;background:linear-gradient(90deg,#ff6b6b,#ff3f3f);padding:10px 18px;border-radius:999px;color:#fff;font-weight:700;box-shadow:0 14px 40px rgba(255,63,63,0.12)}
-        .spark{position:absolute;mix-blend-mode:screen;opacity:0.9}
-        /* subtle animations */
-        @keyframes floaty {0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
-        .card{animation:floaty 6s ease-in-out infinite both}
-        .card:nth-child(2){animation-delay:0.6s}
-        .hero .logo{animation:floaty 8s ease-in-out infinite both}
-        /* Responsive */
-        @media (max-width:900px){
-            .panel{flex-direction:column}
-            .right{height:280px}
-            .cards{grid-template-columns:1fr}
-            .hero .logo{font-size:72px}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #7a6b63;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Decorative corner elements - Matching Login Page */
+        .corner-decoration {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .corner-tl { top: 0; left: 0; width: 300px; height: 300px; }
+        .corner-br { bottom: 0; right: 0; width: 300px; height: 300px; }
+
+        .geo-square {
+            position: absolute;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .corner-tl .sq-1 { top: 30px; left: 30px; width: 140px; height: 140px; border-right: none; border-bottom: none; }
+        .corner-tl .sq-2 { top: 55px; left: 55px; width: 110px; height: 110px; border-right: none; border-bottom: none; }
+        .corner-tl .sq-3 { top: 80px; left: 80px; width: 80px; height: 80px; border-right: none; border-bottom: none; }
+        
+        .corner-br .sq-1 { bottom: 30px; right: 30px; width: 140px; height: 140px; border-left: none; border-top: none; }
+        .corner-br .sq-2 { bottom: 55px; right: 55px; width: 110px; height: 110px; border-left: none; border-top: none; }
+        .corner-br .sq-3 { bottom: 80px; right: 80px; width: 80px; height: 80px; border-left: none; border-top: none; }
+
+        .hero-section {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .content-container {
+            display: flex;
+            align-items: center;
+            max-width: 1400px;
+            width: 100%;
+            gap: 100px;
+        }
+
+        .image-side {
+            flex: 0 0 650px;
+            height: 650px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.4);
+            border: 20px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .image-side img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .text-side {
+            flex: 1;
+            color: #FFFFFF;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .text-side h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -0.01em;
+            color: #e8ddd5;
+        }
+
+        .text-side h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            font-style: italic;
+            color: #e8ddd5;
+            margin-bottom: 35px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+
+        .text-side h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 1px;
+            background: rgba(232, 221, 213, 0.3);
+        }
+
+        .text-side p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            max-width: 550px;
+            color: #e8ddd5;
+            margin-bottom: 45px;
+            font-weight: 300;
+        }
+
+        .btn-main {
+            background-color: #FFFFFF;
+            color: #5B4033;
+            text-decoration: none;
+            padding: 22px 70px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-main:hover {
+            background-color: #e8ddd5;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 1300px) {
+            .content-container {
+                flex-direction: column;
+                gap: 50px;
+            }
+            .image-side {
+                width: 400px;
+                height: 400px;
+                flex: 0 0 400px;
+            }
+            .text-side h1 {
+                font-size: 3rem;
+            }
+            .hero-section {
+                height: auto;
+                padding: 100px 20px;
+            }
+            html, body { overflow: auto; }
+            .corner-decoration { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="panel">
-        <div class="left">
-            <div class="brand">{{ config('app.name', 'Laravel') }}</div>
-            <div class="subtitle">Plataforma de Educación Digital</div>
-
-            <div class="question">¿Qué tipo de usuario eres?</div>
-
-            <div class="cards">
-                <div class="card" data-type="estudiante" id="card-estudiante" onclick="selectType('estudiante', this)">
-                    <div class="card-emoji">👨‍🎓</div>
-                    <div class="card-title">Estudiante</div>
-                    <div class="card-desc">Accede a tus cursos, realiza tareas, descarga materiales y aprende a tu propio ritmo.</div>
-                </div>
-
-                <div class="card" data-type="maestro" id="card-maestro" onclick="selectType('maestro', this)">
-                    <div class="card-emoji">👨‍🏫</div>
-                    <div class="card-title">Maestro</div>
-                    <div class="card-desc">Crea y gestiona cursos, asigna tareas, califica a tus estudiantes y supervisa el progreso.</div>
-                </div>
-            </div>
-
-            <div class="actions">
-                <button class="btn btn-outline" onclick="location.href='{{ route('login') }}'">Iniciar Sesión</button>
-                <button id="registerBtn" class="btn btn-primary" onclick="goRegister()">Registrarse</button>
-                <a class="login-link" href="{{ route('login') }}">¿Ya tienes cuenta? Inicia sesión aquí</a>
-            </div>
-        </div>
-
-        <div class="right" aria-hidden="true">
-            <div class="hero">
-                <div class="bg-blob" style="background-image: url('{{ asset('images/registro-bg.jpg') }}');"></div>
-                <div class="logo">Laravel</div>
-                <div class="accent">Plataforma</div>
-            </div>
-        </div>
+    <!-- Corner decorations -->
+    <div class="corner-decoration corner-tl">
+        <div class="geo-square sq-1"></div>
+        <div class="geo-square sq-2"></div>
+        <div class="geo-square sq-3"></div>
+    </div>
+    
+    <div class="corner-decoration corner-br">
+        <div class="geo-square sq-1"></div>
+        <div class="geo-square sq-2"></div>
+        <div class="geo-square sq-3"></div>
     </div>
 
-    <script>
-        let selected = 'estudiante';
-        document.getElementById('card-estudiante').classList.add('active');
-
-        function selectType(type, el) {
-            selected = type;
-            document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        function goRegister(){
-            // Open prepare route for the selected type so user enters email+name first
-            window.location.href = '{{ url('/register/prepare') }}' + '/' + selected;
-        }
-    </script>
+    <main class="hero-section">
+        <div class="content-container">
+            <div class="image-side">
+                <img src="{{ asset('images/welcome-desk.jpg') }}" alt="Nexus Welcome">
+            </div>
+            <section class="text-side">
+                <h1>¡BIENVENIDO A NEXUS!</h1>
+                <h2>¿Aún no sabes que estudiar?</h2>
+                <p>En Nexus entendemos que elegir tu futuro es una decisión difícil cuando solo conoces la teoría. Aquí no te mostramos folletos, te mostramos la realidad.</p>
+                <p>Conéctate con profesionales activos, resuelve retos reales del mercado laboral y descubre tu verdadera vocación experimentando el día a día de la carrera de tus sueños.</p>
+                <a href="{{ route('login') }}" class="btn-main">¡Comienza ahora!</a>
+            </section>
+        </div>
+    </main>
 </body>
 </html>

@@ -1,0 +1,467 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NEXUS - Bienvenido</title>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .welcome-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .left-section {
+            flex: 1;
+            background: #e8dcc8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .left-section::before {
+            content: '';
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            right: -120px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background-image: url('http://127.0.0.1:8000/images/welcome-desk.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .right-section {
+            flex: 1;
+            background: linear-gradient(to bottom, #7d6d5d, #6b5d4f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 60px;
+            margin: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            text-align: center;
+            color: white;
+        }
+
+        .main-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .main-question {
+            font-size: 26px;
+            font-weight: 500;
+            margin-bottom: 40px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .description-text {
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 95%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            background: white;
+            color: #5a4a3a;
+            border: none;
+            padding: 15px 50px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            min-width: 240px;
+            margin-top: 20px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .welcome-container {
+                flex-direction: column;
+            }
+
+            .left-section {
+                flex: 0.6;
+            }
+
+            .right-section {
+                flex: 0.4;
+                padding: 40px 30px;
+            }
+
+            .main-title {
+                font-size: 32px;
+            }
+
+            .main-question {
+                font-size: 18px;
+            }
+
+            .description-text {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .left-section {
+                display: none;
+            }
+
+            .right-section {
+                flex: 1;
+                padding: 30px 20px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .main-question {
+                font-size: 16px;
+            }
+
+            .cta-button {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="left-section">
+            <div class="image-container">
+                <div class="image-placeholder"></div>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="content-wrapper">
+                <h1 class="main-title">¡BIENVENIDO A NEXUS!</h1>
+                <h2 class="main-question">¿Aún no sabes que estudiar?</h2>
+                <p class="description-text">
+                    En Nexus entendemos que elegir tu futuro es una decisión difícil cuando sólo conoces la teoría. Aquí no te mostramos folletos, te mostramos la realidad.
+                </p>
+                <p class="description-text">
+                    Conéctate con profesionales activos, resuelve retos reales del mercado laboral y descubre tu verdadera vocación experimentando el día a día de la carrera de tus sueños.
+                </p>
+                <button class="cta-button" onclick="location.href='http://127.0.0.1:8000/login'">¡Comienza ahora!</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NEXUS - Bienvenido</title>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #ffffff;
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .welcome-container {
+            width: 100%;
+            max-width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            background: white;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: none;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+#e8dcc8;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-section::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            right: -10: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            right: -150px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background-image: url('http://127.0.0.1:8000/images/welcome-desk.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            object-fit: cover;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .main-title {
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 0px;
+            line-height: 1.15;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .main-question {
+            font-size: 26px;
+            font-weight: 500;
+            margin-bottom: 35px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+            padding-bottom: 15px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .description-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.92);
+            max-width: 90%;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }5a4a3a;
+            border: none;
+            padding: 14px 50px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            min-width: 260px;
+            text-align: center;
+            display: block;
+            margin: 20px auto 0 autox;
+            text-align: center;
+            display: block;
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .cta-button:active {
+            transform: translateY(-1px);
+        }to bottom, #7d6d5d, #6b5d4f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 60px 50px;
+        }
+
+        .right-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1), transparent);
+            pointer-events: none;
+            z-index: 0
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        @media (max-width: 1024px) {
+            .welcome-container {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+
+            .left-section {
+                padding: 60px 40px;
+            }
+
+            .right-section {
+                min-height: 400px;
+            }
+
+            .main-title {
+                font-size: 36px;
+            }
+
+            .main-question {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .left-section {
+                padding: 40px 24px;
+                justify-content: flex-start;
+                padding-top: 60px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .main-question {
+                font-size: 18px;
+            }
+
+            .description-text {
+                font-size: 14px;
+            }
+
+            .cta-button {
+                width: 100%;
+                padding: 14px 30px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="left-section">
+            <div class="image-container">
+                <div class="image-placeholder"></div>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="content-wrapper">
+                <h1 class="main-title">¡BIENVENIDO A NEXUS!</h1>
+                <h2 class="main-question">¿Aún no sabes que estudiar?</h2>
+                <p class="description-text">
+                    En Nexus entendemos que elegir tu futuro es una decisión difícil cuando sólo conoces la teoría. Aquí no te mostramos folletos, te mostramos la realidad.
+                </p>
+                <p class="description-text">
+                    Conéctate con profesionales activos, resuelve retos reales del mercado laboral y descubre tu verdadera vocación experimentando el día a día de la carrera de tus sueños.
+                </p>
+                <button class="cta-button" onclick="location.href='http://127.0.0.1:8000/login'">¡Comienza ahora!</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
