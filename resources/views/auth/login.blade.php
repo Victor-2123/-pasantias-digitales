@@ -18,18 +18,12 @@
         <div class="geo-square sq-3"></div>
     </div>
 
-    <div class="page-header">
-        <h1>
-            <span class="title-login">INICIAR SESIÓN</span>
-            <span class="title-register">CREAR CUENTA</span>
-        </h1>
-    </div>
-
     <main class="content-wrapper">
         <!-- Section 1 (Beige by default) -->
         <section class="login-section">
             <!-- Login Form Content -->
             <div class="login-content">
+                <h2 class="form-title">Iniciar Sesión</h2>
                 <x-auth-session-status class="session-status" :status="session('status')" />
                 <form method="POST" action="{{ route('login') }}" id="login-form">
                     @csrf
@@ -53,13 +47,14 @@
 
             <!-- Register Form Content (Visible in Register Mode) -->
             <div class="register-content">
+                <h2 class="form-title">Crear Cuenta</h2>
                 <form method="POST" action="{{ route('register') }}" id="register-form">
                     @csrf
                     <input type="hidden" name="user_type" id="user_type_input" value="{{ request('type', 'estudiante') }}" />
                     
                     <div class="form-group">
                         <label for="reg_name" class="form-label">Nombre</label>
-                        <input id="reg_name" class="form-input" type="text" name="name" value="{{ old('name') }}" required autocomplete="name" />
+                        <input id="reg_name" class="form-input" type="text" name="name" value="{{ old('name') }}" required autocomplete="name" oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')" />
                         @if ($errors->has('name'))
                             <div class="error-message">{{ $errors->first('name') }}</div>
                         @endif
@@ -106,7 +101,12 @@
                     <div class="circular-img-wrapper">
                         <img src="{{ asset('images/student-study.jpg') }}" alt="Estudiante estudiando">
                     </div>
-                    <button type="button" onclick="toggleAuthMode('login')" class="btn-back" style="background: none; border: none; cursor: pointer; padding: 0;">Volver</button>
+                    <button type="button" onclick="toggleAuthMode('login')" class="btn-back" style="background: none; border: none; cursor: pointer; padding: 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </section>

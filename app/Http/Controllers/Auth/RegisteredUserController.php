@@ -79,6 +79,10 @@ class RegisteredUserController extends Controller
         // Clear temporary registration session values
         Session::forget(['reg_name', 'reg_email', 'reg_user_type']);
 
+        if ($user->user_type === 'maestro') {
+            return redirect(route('dashboard.mentor', absolute: false));
+        }
+
         return redirect(route('dashboard', absolute: false));
     }
 }

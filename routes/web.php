@@ -19,14 +19,23 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Role specific dashboards
-Route::get('/dashboard/estudiante', function () {
-    return view('dashboard-estudiante');
-})->middleware(['auth', 'verified'])->name('dashboard.estudiante');
+Route::get('/mis-cursos', function () {
+    return view('courses.index');
+})->middleware(['auth', 'verified'])->name('courses.index');
 
-Route::get('/dashboard/maestro', function () {
-    return view('dashboard-maestro');
-})->middleware(['auth', 'verified'])->name('dashboard.maestro');
+// Role specific dashboards
+Route::get('/dashboard/mentor', function () {
+    return view('dashboard.mentor');
+})->middleware(['auth', 'verified'])->name('dashboard.mentor');
+
+// Career routes
+Route::get('/careers', function () {
+    return view('careers.index');
+})->name('careers.index');
+
+Route::get('/careers/software-architecture', function () {
+    return view('careers.show');
+})->name('careers.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

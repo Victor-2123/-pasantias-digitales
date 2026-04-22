@@ -32,11 +32,11 @@ class AuthenticatedSessionController extends Controller
 
         if ($user && isset($user->user_type)) {
             if ($user->user_type === 'estudiante') {
-                return redirect()->intended(route('dashboard.estudiante', absolute: false));
+                return redirect()->intended(route('dashboard', absolute: false));
             }
 
             if ($user->user_type === 'maestro') {
-                return redirect()->intended(route('dashboard.maestro', absolute: false));
+                return redirect()->intended(route('dashboard.mentor', absolute: false));
             }
         }
 
