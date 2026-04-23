@@ -396,11 +396,11 @@
             
             /* Mode: Register */
             .login-container.is-register .content-wrapper .login-section {
-                transform: translateX(100%) translateZ(100px) rotateY(-5deg);
+                transform: translateX(100%);
                 z-index: 20;
             }
             .login-container.is-register .content-wrapper .register-section {
-                transform: translateX(-100%) translateZ(-100px) rotateY(5deg);
+                transform: translateX(-100%);
                 z-index: 10;
             }
 
@@ -446,14 +446,39 @@
 
         <script>
             // Global toggle function
-            window.toggleAuthMode = function(mode, pushState = true) {
+            window.toggleAuthMode = function(mode, userType = 'estudiante', pushState = true) {
+                // Compatibility for older calls missing the userType arg
+                if (typeof userType === "boolean") {
+                    pushState = userType;
+                    userType = 'estudiante';
+                }
+
                 const container = document.querySelector('.login-container');
                 if (!container) return;
 
                 if (mode === 'register') {
+                    // Actualizar el valor oculto para el envío del formulario
+                    const typeInput = document.getElementById('user_type_input');
+                    if (typeInput) typeInput.value = userType;
+
+                    // Mostrar u ocultar el campo de cédula dinámicamente y cambiar imagen
+                    const cedulaFields = document.querySelectorAll('.cedula-field');
+                    const cedulaInputs = document.querySelectorAll('.cedula-input');
+                    const sideImage = document.getElementById('auth-side-image');
+                    
+                    if (userType === 'maestro') {
+                        cedulaFields.forEach(el => el.style.display = 'block');
+                        if (sideImage) sideImage.src = '{{ asset("images/mentor-teaching.png") }}';
+                        // cedulaInputs.forEach(el => el.required = true); // Opcional, si deseas que sea estrictamente requerido
+                    } else {
+                        cedulaFields.forEach(el => el.style.display = 'none');
+                        if (sideImage) sideImage.src = '{{ asset("images/student-study.jpg") }}';
+                        // cedulaInputs.forEach(el => el.required = false);
+                    }
+
                     container.classList.remove('is-login');
                     container.classList.add('is-register');
-                    if (pushState) history.pushState({mode: 'register'}, '', '{{ route("register") }}');
+                    if (pushState) history.pushState({mode: 'register', type: userType}, '', '{{ route("register") }}');
                 } else {
                     container.classList.remove('is-register');
                     container.classList.add('is-login');

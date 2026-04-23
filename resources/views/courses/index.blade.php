@@ -1,7 +1,17 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="mb-8 flex items-end justify-between">
+            @if(Auth::user()->user_type === 'maestro')
+                <div class="bg-white p-16 text-center rounded-[2rem] border border-stitch-outline/10 shadow-xl mt-8 flex flex-col items-center">
+                    <div class="w-24 h-24 bg-stitch-background rounded-full flex items-center justify-center mb-6 text-[#1976D2]">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <h2 class="font-lexend text-2xl font-bold text-stitch-primary mb-4">Sección en construcción</h2>
+                    <p class="text-stitch-on-surface-variant max-w-lg">Aún no hemos configurado el apartado de "Mis Retos" para el panel de administración de los mentores. Estamos trabajando en ello.</p>
+                    <a href="{{ route('dashboard.mentor') }}" class="mt-8 px-6 py-3 bg-stitch-primary text-white rounded-stitch font-bold text-sm hover:opacity-90 transition-opacity">Volver al Inicio</a>
+                </div>
+            @else
+                <div class="mb-8 flex items-end justify-between">
                 <div>
                     <h1 class="font-lexend text-3xl font-bold text-stitch-primary">Mis Cursos</h1>
                     <p class="text-stitch-on-surface-variant mt-2">Gestiona tu aprendizaje y completa tus tareas pendientes.</p>
@@ -84,6 +94,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

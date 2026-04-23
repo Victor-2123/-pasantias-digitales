@@ -67,6 +67,15 @@
                             <div class="error-message">{{ $errors->first('email') }}</div>
                         @endif
                     </div>
+                    
+                    <!-- Campo Dinámico de Cédula (Mentor/Maestro) -->
+                    <div class="form-group cedula-field" style="display: none;">
+                        <label for="reg_cedula" class="form-label">Ingresa número de cédula</label>
+                        <input id="reg_cedula" class="form-input cedula-input" type="text" name="cedula" value="{{ old('cedula') }}" oninput="this.value = this.value.replace(/[^0-9-]/g, '')" />
+                        @if ($errors->has('cedula'))
+                            <div class="error-message">{{ $errors->first('cedula') }}</div>
+                        @endif
+                    </div>
                     <div class="form-group">
                         <label for="reg_password" class="form-label">Contraseña</label>
                         <input id="reg_password" class="form-input" type="password" name="password" required autocomplete="new-password" />
@@ -75,7 +84,7 @@
                         <label for="reg_password_confirmation" class="form-label">Confirmar contraseña</label>
                         <input id="reg_password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" />
                     </div>
-                    <button type="submit" class="btn-login" style="width: 60%; margin-top: 15px;">Crear cuenta</button>
+                    <button type="submit" class="btn-login" style="width: 60%; margin-top: 15px;">Registrar</button>
                 </form>
             </div>
         </section>
@@ -87,10 +96,10 @@
                 <h2 class="register-title">¿AÚN NO TIENES UNA CUENTA?</h2>
                 <span class="register-subtitle">¡Regístrate aquí!</span>
                 <div class="register-buttons">
-                    <button type="button" onclick="toggleAuthMode('register')" class="btn-register">
+                    <button type="button" onclick="toggleAuthMode('register', 'estudiante')" class="btn-register">
                         Crear cuenta de estudiante.
                     </button>
-                    <button type="button" onclick="toggleAuthMode('register')" class="btn-register">
+                    <button type="button" onclick="toggleAuthMode('register', 'maestro')" class="btn-register">
                         Crear cuenta de mentor.
                     </button>
                 </div>
@@ -100,7 +109,7 @@
             <div class="register-content">
                 <div class="image-side-container">
                     <div class="circular-img-wrapper">
-                        <img src="{{ asset('images/student-study.jpg') }}" alt="Estudiante estudiando">
+                        <img id="auth-side-image" src="{{ asset('images/student-study.jpg') }}" alt="Estudiante / Mentor">
                     </div>
                     <button type="button" onclick="toggleAuthMode('login')" class="btn-back" style="background: none; border: none; cursor: pointer; padding: 0;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -124,15 +133,20 @@
     document.addEventListener('DOMContentLoaded', () => {
         // Handle direct landing or browser history
         const urlParams = new URLSearchParams(window.location.search);
+        let userType = urlParams.get('type') || '{{ old("user_type", "estudiante") }}';
         if (urlParams.get('mode') === 'login' || (window.location.pathname.includes('login') && !window.location.pathname.includes('register'))) {
-            toggleAuthMode('login', false);
+            toggleAuthMode('login', userType, false);
+        } else {
+            toggleAuthMode('register', userType, false);
         }
     });
 
     // Capture form validation errors from bridge
     @if($errors->any())
         @if(!$errors->has('name') && !old('name'))
-            toggleAuthMode('login', false);
+            toggleAuthMode('login', 'estudiante', false);
+        @else
+            toggleAuthMode('register', '{{ old("user_type", "estudiante") }}', false);
         @endif
     @endif
 </script>
