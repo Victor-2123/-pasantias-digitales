@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="py-12" x-data="{ openTaskModal: false }">
+    <div class="py-12" x-data="{ openTaskModal: false, fileName: '' }">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid lg:grid-cols-12 gap-8">
                 
@@ -57,14 +57,23 @@
                     <div class="bg-white p-8 rounded-stitch border border-stitch-outline/10 shadow-sm">
                         <h2 class="font-lexend text-xl font-bold text-stitch-primary mb-6">Próximas Entregas</h2>
                         <div class="space-y-4">
-                            <div @click="openTaskModal = true" class="flex gap-4 p-4 rounded-stitch bg-stitch-background border border-stitch-outline/10 hover:border-stitch-secondary/30 transition-colors cursor-pointer group">
-                                <div class="flex-shrink-0 w-12 h-12 bg-white shadow-sm text-stitch-primary rounded-stitch flex flex-col items-center justify-center font-bold group-hover:scale-105 transition-transform">
-                                    <span class="text-[10px] uppercase text-stitch-on-surface-variant">Hoy</span>
-                                    <svg class="w-5 h-5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div @click="{{ (isset($hasSubmittedChallenge) && $hasSubmittedChallenge) ? '' : 'openTaskModal = true' }}" class="flex gap-4 p-4 rounded-stitch bg-stitch-background border border-stitch-outline/10 hover:border-stitch-secondary/30 transition-colors {{ (isset($hasSubmittedChallenge) && $hasSubmittedChallenge) ? '' : 'cursor-pointer' }} group">
+                                <div class="flex-shrink-0 w-12 h-12 {{ (isset($hasSubmittedChallenge) && $hasSubmittedChallenge) ? 'bg-stitch-secondary text-white' : 'bg-white shadow-sm text-stitch-primary' }} rounded-stitch flex flex-col items-center justify-center font-bold group-hover:scale-105 transition-transform">
+                                    @if(isset($hasSubmittedChallenge) && $hasSubmittedChallenge)
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    @else
+                                        <span class="text-[10px] uppercase text-stitch-on-surface-variant">Hoy</span>
+                                        <svg class="w-5 h-5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    @endif
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-stitch-primary text-sm leading-tight">Enlistar los componentes de una red y una pc</h4>
-                                    <p class="text-xs text-stitch-on-surface-variant mt-1">Curso: Redes</p>
+                                    @if(isset($hasSubmittedChallenge) && $hasSubmittedChallenge)
+                                        <h4 class="font-bold text-stitch-on-surface-variant text-sm leading-tight line-through opacity-70">Enlistar los componentes de una red y una pc</h4>
+                                        <p class="text-xs text-stitch-on-surface-variant mt-1 text-stitch-secondary font-bold">¡Completado!</p>
+                                    @else
+                                        <h4 class="font-bold text-stitch-primary text-sm leading-tight">Enlistar los componentes de una red y una pc</h4>
+                                        <p class="text-xs text-stitch-on-surface-variant mt-1">Curso: Redes</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -95,40 +104,43 @@
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <div x-show="openTaskModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-[2rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-stitch-outline/10">
-                    <div class="bg-white px-6 pt-8 pb-6 sm:p-8 sm:pb-6">
-                        <div class="sm:flex sm:items-start">
-                            <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                                <span class="px-3 py-1 bg-stitch-secondary/10 text-stitch-secondary rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">Redes</span>
-                                <h3 class="text-xl leading-6 font-lexend font-bold text-stitch-primary mb-2" id="modal-title">
-                                    Enlistar componentes de res y PC
-                                </h3>
-                                <div class="mt-3">
-                                    <p class="text-sm text-stitch-on-surface-variant leading-relaxed">
-                                        <strong>Especificaciones:</strong> Elabora un documento donde enlistes detalladamente los componentes clave de hardware de una computadora (CPU, RAM, etc.) en conjunto con los dispositivos principales de comunicación (Routers, Switches, etc.).
-                                    </p>
-                                </div>
-                                
-                                <!-- File Upload Area -->
-                                <div class="mt-6 border-2 border-dashed border-stitch-primary/30 rounded-stitch p-8 flex flex-col items-center justify-center bg-stitch-primary/5 hover:bg-stitch-primary/10 transition-colors cursor-pointer text-center relative group">
-                                    <input type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform">
-                                        <svg class="h-6 w-6 text-stitch-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    <form method="POST" action="{{ route('challenges.submit', 1) }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="bg-white px-6 pt-8 pb-6 sm:p-8 sm:pb-6">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                                    <span class="px-3 py-1 bg-stitch-secondary/10 text-stitch-secondary rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">Redes</span>
+                                    <h3 class="text-xl leading-6 font-lexend font-bold text-stitch-primary mb-2" id="modal-title">
+                                        Enlistar componentes de res y PC
+                                    </h3>
+                                    <div class="mt-3">
+                                        <p class="text-sm text-stitch-on-surface-variant leading-relaxed">
+                                            <strong>Especificaciones:</strong> Elabora un documento donde enlistes detalladamente los componentes clave de hardware de una computadora (CPU, RAM, etc.) en conjunto con los dispositivos principales de comunicación (Routers, Switches, etc.).
+                                        </p>
                                     </div>
-                                    <p class="text-sm font-bold text-stitch-primary">Cargar archivo</p>
-                                    <p class="text-xs text-stitch-on-surface-variant mt-1 px-4">Arrastra tu documento o haz clic aquí (.pdf, .docx)</p>
+                                    
+                                    <!-- File Upload Area -->
+                                    <div class="mt-6 border-2 border-dashed border-stitch-primary/30 rounded-stitch p-8 flex flex-col items-center justify-center bg-stitch-primary/5 hover:bg-stitch-primary/10 transition-colors cursor-pointer text-center relative group">
+                                        <input type="file" name="file" accept=".pdf,.docx" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : ''" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                                            <svg class="h-6 w-6 text-stitch-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                        </div>
+                                        <p class="text-sm font-bold text-stitch-primary" x-text="fileName ? fileName : 'Cargar archivo'"></p>
+                                        <p class="text-xs text-stitch-on-surface-variant mt-1 px-4" x-show="!fileName">Arrastra tu documento o haz clic aquí (.pdf, .docx)</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-stitch-background/50 px-6 py-4 sm:px-8 sm:flex border-t border-stitch-outline/10 gap-3">
-                        <button type="button" @click="openTaskModal = false" class="w-full inline-flex justify-center items-center rounded-stitch border border-transparent px-6 py-3 bg-stitch-primary text-sm font-bold text-white hover:bg-stitch-primary/90 focus:outline-none transition-colors">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            Entregar Tarea
-                        </button>
-                        <button type="button" @click="openTaskModal = false" class="mt-3 sm:mt-0 w-full inline-flex justify-center items-center rounded-stitch border border-stitch-outline/20 px-6 py-3 bg-white text-sm font-bold text-stitch-on-surface hover:bg-gray-50 focus:outline-none transition-colors">
-                            Cancelar
-                        </button>
-                    </div>
+                        <div class="bg-stitch-background/50 px-6 py-4 sm:px-8 sm:flex border-t border-stitch-outline/10 gap-3">
+                            <button type="submit" class="w-full inline-flex justify-center items-center rounded-stitch border border-transparent px-6 py-3 bg-stitch-primary text-sm font-bold text-white hover:bg-stitch-primary/90 focus:outline-none transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Entregar Tarea
+                            </button>
+                            <button type="button" @click="openTaskModal = false" class="mt-3 sm:mt-0 w-full inline-flex justify-center items-center rounded-stitch border border-stitch-outline/20 px-6 py-3 bg-white text-sm font-bold text-stitch-on-surface hover:bg-gray-50 focus:outline-none transition-colors">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

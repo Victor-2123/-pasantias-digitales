@@ -79,10 +79,20 @@
                             <div class="p-4 rounded-stitch border border-stitch-outline/10 hover:border-stitch-secondary/30 transition-colors cursor-pointer group">
                                 <div class="flex items-start gap-3">
                                     <div class="mt-1">
-                                        <div class="w-5 h-5 rounded border-2 border-stitch-outline/30 group-hover:border-stitch-secondary flex items-center justify-center transition-colors"></div>
+                                        @if(isset($hasSubmittedChallenge) && $hasSubmittedChallenge)
+                                            <div class="w-5 h-5 rounded bg-stitch-secondary text-white flex items-center justify-center transition-colors">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                            </div>
+                                        @else
+                                            <div class="w-5 h-5 rounded border-2 border-stitch-outline/30 group-hover:border-stitch-secondary flex items-center justify-center transition-colors"></div>
+                                        @endif
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-sm text-stitch-primary mb-1 group-hover:text-stitch-secondary transition-colors">Enlistar los componentes de una red y una pc</h4>
+                                        @if(isset($hasSubmittedChallenge) && $hasSubmittedChallenge)
+                                            <h4 class="font-bold text-sm text-stitch-on-surface-variant line-through opacity-70 mb-1">Enlistar los componentes de una red y una pc</h4>
+                                        @else
+                                            <h4 class="font-bold text-sm text-stitch-primary mb-1 group-hover:text-stitch-secondary transition-colors">Enlistar los componentes de una red y una pc</h4>
+                                        @endif
                                         <p class="text-xs text-stitch-on-surface-variant flex items-center gap-1 mt-2">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path></svg>
                                             De: Redes
