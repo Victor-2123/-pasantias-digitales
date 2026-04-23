@@ -45,6 +45,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/usuarios', function () {
+        $users = \App\Models\User::orderBy('created_at', 'desc')->get();
+        return view('usuarios.index', compact('users'));
+    })->name('usuarios.index');
 });
 
 require __DIR__.'/auth.php';
