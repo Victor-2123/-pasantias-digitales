@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Challenge::class, 'mentor_id');
     }
+
+    public function taskSubmissions(): HasMany
+    {
+        return $this->hasMany(TaskSubmission::class);
+    }
 }

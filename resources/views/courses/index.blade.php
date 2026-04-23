@@ -2,13 +2,49 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             @if(Auth::user()->user_type === 'maestro')
-                <div class="bg-white p-16 text-center rounded-[2rem] border border-stitch-outline/10 shadow-xl mt-8 flex flex-col items-center">
-                    <div class="w-24 h-24 bg-stitch-background rounded-full flex items-center justify-center mb-6 text-[#1976D2]">
-                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <div class="mb-8 flex items-end justify-between">
+                    <div>
+                        <h1 class="font-lexend text-3xl font-bold text-stitch-primary">Panel de Evaluación</h1>
+                        <p class="text-stitch-on-surface-variant mt-2">Revisa las entregas actuales de tus alumnos en el curso.</p>
                     </div>
-                    <h2 class="font-lexend text-2xl font-bold text-stitch-primary mb-4">Sección en construcción</h2>
-                    <p class="text-stitch-on-surface-variant max-w-lg">Aún no hemos configurado el apartado de "Mis Retos" para el panel de administración de los mentores. Estamos trabajando en ello.</p>
-                    <a href="{{ route('dashboard.mentor') }}" class="mt-8 px-6 py-3 bg-stitch-primary text-white rounded-stitch font-bold text-sm hover:opacity-90 transition-opacity">Volver al Inicio</a>
+                </div>
+                <div class="bg-white rounded-stitch border border-stitch-outline/10 shadow-sm overflow-hidden">
+                    <div class="p-6 md:p-8">
+                        <h3 class="text-xl font-bold text-stitch-primary mb-6">Reto: {{ $challenge->title ?? 'Reto Actual' }}</h3>
+                        
+                        <div class="space-y-4">
+                            @foreach($students as $student)
+                            <div class="flex items-center justify-between p-4 rounded-stitch border border-stitch-outline/10 hover:border-stitch-secondary/30 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-stitch-primary/10 rounded-full flex items-center justify-center text-stitch-primary font-bold">
+                                        {{ substr($student->name, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-stitch-primary">{{ $student->name }}</h4>
+                                        <p class="text-xs text-stitch-on-surface-variant">{{ $student->email }}</p>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    @if($student->taskSubmissions->count() > 0)
+                                        <a href="{{ asset('storage/' . $student->taskSubmissions->first()->file_path) }}" target="_blank" class="px-4 py-2 bg-stitch-secondary text-white rounded-stitch text-xs font-bold hover:opacity-90 transition-opacity flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                            Ver PDF Entregado
+                                        </a>
+                                    @else
+                                        <span class="px-4 py-2 border border-stitch-outline/20 text-stitch-on-surface-variant rounded-stitch text-xs font-bold flex items-center gap-2 bg-gray-50">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Falta Entregar
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                            @if($students->isEmpty())
+                                <p class="text-stitch-on-surface-variant text-center py-4">No hay estudiantes inscritos aún.</p>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             @else
                 <div class="mb-8 flex items-end justify-between">

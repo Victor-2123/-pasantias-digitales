@@ -25,6 +25,17 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/mis-cursos', function () {
+    if (auth()->user()->user_type === 'maestro') {
+        $challenge = \App\Models\Challenge::where('mentor_id', auth()->id())->first() ?? \App\Models\Challenge::first();
+        $students = \App\Models\User::where('user_type', 'estudiante')
+            ->with(['taskSubmissions' => function($q) use ($challenge) {
+                if ($challenge) {
+                    $q->where('challenge_id', $challenge->id);
+                }
+            }])->get();
+        return view('courses.index', compact('students', 'challenge'));
+    }
+
     $hasSubmittedChallenge = \App\Models\TaskSubmission::where('user_id', auth()->id())
         ->where('challenge_id', 1)
         ->exists();
