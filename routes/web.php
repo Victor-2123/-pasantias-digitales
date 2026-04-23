@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TestVocacionalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,6 +33,9 @@ Route::get('/dashboard/mentor', function () {
 Route::get('/careers', function () {
     return view('careers.index');
 })->name('careers.index');
+
+// Vocational Test
+Route::get('/test-vocacional', [TestVocacionalController::class, 'index'])->name('vocacional.test');
 
 Route::get('/careers/software-architecture', function () {
     return view('careers.show');
