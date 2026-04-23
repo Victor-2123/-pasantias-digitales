@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TestVocacionalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -41,6 +42,9 @@ Route::get('/careers', function () {
     return view('careers.index');
 })->name('careers.index');
 
+// Vocational Test
+Route::get('/test-vocacional', [TestVocacionalController::class, 'index'])->name('vocacional.test');
+
 Route::get('/careers/software-architecture', function () {
     return view('careers.show');
 })->name('careers.show');
@@ -50,6 +54,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/challenges/{challenge}/submit', [\App\Http\Controllers\TaskSubmissionController::class, 'store'])->name('challenges.submit');
+
+    Route::get('/usuarios', function () {
+        $users = \App\Models\User::orderBy('created_at', 'desc')->get();
+        return view('usuarios.index', compact('users'));
+    })->name('usuarios.index');
 });
 
 require __DIR__.'/auth.php';

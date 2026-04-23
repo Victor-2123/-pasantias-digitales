@@ -108,7 +108,10 @@
                     <div class="relative z-10 space-y-6">
                         <h2 class="font-lexend text-3xl font-bold">¿No estás seguro por dónde empezar?</h2>
                         <p class="text-white/80 max-w-2xl mx-auto">Realiza nuestro test de habilidades de 5 minutos para encontrar las carreras que mejor se adaptan a tus intereses y fortalezas naturales.</p>
-                        <button class="px-8 py-3 bg-stitch-secondary text-white rounded-stitch font-bold hover:scale-105 transition-transform">Realizar Test de Habilidades</button>
+                        <a href="{{ route('vocacional.test') }}" id="btn-realizar-test"
+                           class="inline-block px-8 py-3 bg-stitch-secondary text-white rounded-stitch font-bold hover:scale-105 transition-transform">
+                            Realizar Test de Habilidades
+                        </a>
                     </div>
                     <div class="absolute -left-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
                 </div>
