@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'user_type',
         'is_suspended',
+        'profile_photo',
     ];
 
     /**

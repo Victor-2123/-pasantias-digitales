@@ -13,9 +13,39 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
+
+        <div class="flex items-center gap-6" x-data="{ photoPreview: null }">
+            <div class="relative group">
+                <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-stitch-primary/10 shadow-sm bg-gray-100 flex items-center justify-center">
+                    <template x-if="!photoPreview">
+                        @if($user->profile_photo)
+                            <img src="{{ asset('storage/'.$user->profile_photo) }}" class="w-full h-full object-cover">
+                        @else
+                            <span class="text-3xl font-bold text-stitch-primary opacity-30">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                        @endif
+                    </template>
+                    <template x-if="photoPreview">
+                        <img :src="photoPreview" class="w-full h-full object-cover">
+                    </template>
+                </div>
+                
+                <label for="profile_photo" class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 text-white text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-full">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    CAMBIAR
+                </label>
+                <input type="file" id="profile_photo" name="profile_photo" class="hidden" accept="image/*" 
+                    @change="const file = $event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (e) => { photoPreview = e.target.result; }; reader.readAsDataURL(file); }">
+            </div>
+            
+            <div>
+                <p class="text-sm font-bold text-stitch-primary">Foto de perfil</p>
+                <p class="text-xs text-stitch-on-surface-variant">Haz clic en el círculo para escoger una imagen.</p>
+                <x-input-error class="mt-2" :messages="$errors->get('profile_photo')" />
+            </div>
+        </div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />

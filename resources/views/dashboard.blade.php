@@ -89,12 +89,18 @@
                         </div>
                     @else
                         <!-- Prompt to take test -->
-                        <div class="bg-white border border-stitch-outline/10 rounded-stitch p-8 shadow-sm flex flex-col sm:flex-row items-center gap-6">
-                            <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">🧭</div>
-                            <div>
-                                <h2 class="font-lexend text-xl font-bold text-stitch-primary">Descubre tu perfil vocacional</h2>
-                                <p class="text-stitch-on-surface-variant text-sm mt-1">Responde 30 preguntas y encuentra las carreras que mejor se adaptan a tus fortalezas.</p>
-                                <a href="{{ route('vocacional.test') }}" class="inline-block mt-3 px-5 py-2.5 bg-stitch-primary text-white text-sm font-bold rounded-stitch hover:scale-105 transition-all">Iniciar Test Vocacional →</a>
+                        <div class="bg-gradient-to-r from-white to-stitch-background border border-stitch-primary/10 rounded-[2rem] p-8 shadow-xl flex flex-col sm:flex-row items-center gap-8 relative overflow-hidden group">
+                            <!-- Background decoration -->
+                            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-stitch-primary/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                            
+                            <div class="w-20 h-20 bg-white shadow-inner rounded-2xl flex items-center justify-center text-4xl flex-shrink-0 border border-stitch-primary/5 transform group-hover:rotate-12 transition-transform">🧭</div>
+                            <div class="relative z-10 flex-1">
+                                <h2 class="font-lexend text-2xl font-bold text-stitch-primary">Descubre tu perfil vocacional</h2>
+                                <p class="text-stitch-on-surface-variant text-base mt-2 max-w-md">Responde 30 preguntas diseñadas por expertos y encuentra las carreras que mejor se adaptan a tus talentos y pasiones.</p>
+                                <a href="{{ route('vocacional.test') }}" class="inline-flex items-center mt-5 px-8 py-3.5 bg-stitch-primary text-white text-sm font-extrabold rounded-xl shadow-lg shadow-stitch-primary/20 hover:bg-stitch-primary-container hover:shadow-stitch-primary/30 hover:-translate-y-1 transition-all active:scale-95">
+                                    Iniciar Test Vocacional 
+                                    <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </a>
                             </div>
                         </div>
                     @endif
