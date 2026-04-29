@@ -13,6 +13,8 @@
 
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- CSRF for fetch requests -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
         [x-cloak] { display: none !important; }
@@ -310,6 +312,15 @@
                         >
                             📚 Explorar Carreras
                         </a>
+                        @auth
+                        <a
+                            href="{{ route('dashboard') }}"
+                            id="btn-ver-dashboard"
+                            class="flex-1 px-6 py-3.5 bg-stitch-primary text-white font-bold rounded-xl text-center hover:scale-105 hover:shadow-md transition-all duration-200"
+                        >
+                            📊 Volver a mi Dashboard
+                        </a>
+                        @endauth
                     </div>
                 </div>
 
@@ -423,6 +434,27 @@
                     carrerasMostradas: carrerasSeleccionadas,
                     puntaje: maxPts,
                 };
+
+                // 7. Persistir resultado si el usuario está autenticado
+                @auth
+                fetch('{{ route("vocacional.save") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        dominant_area:     areaGanadora,
+                        dominant_name:     this.carrerasData[areaGanadora].nombre,
+                        score_a:           conteo['A'],
+                        score_b:           conteo['B'],
+                        score_c:           conteo['C'],
+                        score_d:           conteo['D'],
+                        careers_suggested: carrerasSeleccionadas,
+                    }),
+                }).catch(err => console.warn('No se pudo guardar el resultado:', err));
+                @endauth
 
                 this.phase = 'results';
                 window.scrollTo({ top: 0, behavior: 'smooth' });

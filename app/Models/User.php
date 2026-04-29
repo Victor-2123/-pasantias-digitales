@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'user_type',
+        'is_suspended',
     ];
 
     /**
@@ -57,5 +58,26 @@ class User extends Authenticatable
     public function taskSubmissions(): HasMany
     {
         return $this->hasMany(TaskSubmission::class);
+    }
+
+    public function vocationalTestResult()
+    {
+        return $this->hasOne(VocationalTestResult::class);
+    }
+
+    /**
+     * Shorthand to check if the user is an administrator.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->user_type === 'administrador';
+    }
+
+    /**
+     * Shorthand to check if the user is a mentor/teacher.
+     */
+    public function isMentor(): bool
+    {
+        return $this->user_type === 'maestro';
     }
 }

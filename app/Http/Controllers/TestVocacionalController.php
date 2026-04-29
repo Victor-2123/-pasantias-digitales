@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\VocationalTestResult;
 
 class TestVocacionalController extends Controller
 {
@@ -385,5 +386,39 @@ class TestVocacionalController extends Controller
         $carreras  = self::getCarreras();
 
         return view('vocacional.test', compact('preguntas', 'carreras'));
+    }
+
+    /**
+     * Persists the test result for the authenticated user.
+     * Called via fetch() from Alpine.js after calcularResultados().
+     */
+    public function save(Request $request)
+    {
+        $validated = $request->validate([
+            'dominant_area'     => 'required|in:A,B,C,D',
+            'dominant_name'     => 'required|string|max:100',
+            'score_a'           => 'required|integer|min:0|max:30',
+            'score_b'           => 'required|integer|min:0|max:30',
+            'score_c'           => 'required|integer|min:0|max:30',
+            'score_d'           => 'required|integer|min:0|max:30',
+            'careers_suggested' => 'required|array|min:1',
+            'careers_suggested.*' => 'string|max:200',
+        ]);
+
+        // updateOrCreate so re-taking the test overwrites the previous result
+        VocationalTestResult::updateOrCreate(
+            ['user_id' => auth()->id()],
+            [
+                'dominant_area'     => $validated['dominant_area'],
+                'dominant_name'     => $validated['dominant_name'],
+                'score_a'           => $validated['score_a'],
+                'score_b'           => $validated['score_b'],
+                'score_c'           => $validated['score_c'],
+                'score_d'           => $validated['score_d'],
+                'careers_suggested' => $validated['careers_suggested'],
+            ]
+        );
+
+        return response()->json(['ok' => true]);
     }
 }

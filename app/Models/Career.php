@@ -14,6 +14,10 @@ class Career extends Model
         'name',
         'slug',
         'description',
+        'category',
+        'tagline',
+        'color',
+        'icon',
     ];
 
     public function challenges(): HasMany

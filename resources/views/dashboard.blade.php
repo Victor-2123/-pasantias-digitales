@@ -2,22 +2,102 @@
     <div class="py-12" x-data="{ openTaskModal: false, fileName: '' }">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid lg:grid-cols-12 gap-8">
-                
+
                 <!-- Main Content -->
                 <div class="lg:col-span-8 space-y-8">
                     <!-- Welcome Hero -->
                     <div class="p-10 rounded-[2rem] bg-stitch-primary text-white relative overflow-hidden shadow-2xl">
                         <div class="relative z-10 space-y-4">
                             <h1 class="font-lexend text-4xl font-bold">¡Hola, {{ explode(' ', auth()->user()->name)[0] ?? 'Estudiante' }}!</h1>
-                            <p class="text-lg text-white/80 max-w-md">Aún no te has inscrito a ningún plan de carrera. Explora nuestras opciones y <span class="text-stitch-secondary-container font-bold">comienza tu primer reto</span>.</p>
-                            <div class="pt-4 flex gap-4">
+                            <p class="text-lg text-white/80 max-w-md">
+                                @if($vocationalResult)
+                                    Tu perfil vocacional dominante es
+                                    <span class="text-white font-bold">{{ $vocationalResult->dominant_name }}</span>.
+                                    Continúa explorando las carreras recomendadas.
+                                @else
+                                    Aún no has completado el test vocacional. ¡Descubre qué área va contigo!
+                                @endif
+                            </p>
+                            <div class="pt-4 flex flex-wrap gap-3">
                                 <a href="{{ route('careers.index') }}" class="px-6 py-2.5 bg-white text-stitch-primary rounded-stitch font-bold text-sm hover:bg-white/90 transition-colors">Explorar Carreras</a>
+                                @if(!$vocationalResult)
+                                    <a href="{{ route('vocacional.test') }}" class="px-6 py-2.5 bg-stitch-secondary text-white rounded-stitch font-bold text-sm hover:bg-stitch-secondary/90 transition-colors">Hacer Test Vocacional</a>
+                                @endif
                             </div>
                         </div>
                         <!-- Abstract decoration -->
                         <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-stitch-secondary/20 rounded-full blur-3xl"></div>
                         <div class="absolute right-10 top-10 w-24 h-24 border-4 border-white/10 rounded-full"></div>
                     </div>
+
+                    <!-- Vocational Result Card -->
+                    @if($vocationalResult)
+                        @php
+                            $colorMap = [
+                                'blue'    => ['bg' => 'bg-gradient-to-br from-stitch-primary to-stitch-primary-container', 'badge' => 'bg-white/20', 'bar' => 'bg-stitch-primary'],
+                                'emerald' => ['bg' => 'bg-gradient-to-br from-emerald-600 to-emerald-800', 'badge' => 'bg-white/20', 'bar' => 'bg-emerald-500'],
+                                'amber'   => ['bg' => 'bg-gradient-to-br from-amber-500 to-amber-700',   'badge' => 'bg-white/20', 'bar' => 'bg-amber-500'],
+                                'violet'  => ['bg' => 'bg-gradient-to-br from-violet-600 to-violet-800', 'badge' => 'bg-white/20', 'bar' => 'bg-violet-500'],
+                            ];
+                            $vc = $colorMap[$vocationalResult->color] ?? $colorMap['blue'];
+                            $areas = [
+                                ['key'=>'score_a','name'=>'Ingeniería y Tecnología','bar'=>'bg-stitch-primary','text'=>'text-stitch-primary'],
+                                ['key'=>'score_b','name'=>'Salud y Bienestar','bar'=>'bg-emerald-500','text'=>'text-emerald-600'],
+                                ['key'=>'score_c','name'=>'Negocios y Ciencias Soc.','bar'=>'bg-amber-500','text'=>'text-amber-600'],
+                                ['key'=>'score_d','name'=>'Artes, Diseño y Educación','bar'=>'bg-violet-500','text'=>'text-violet-600'],
+                            ];
+                        @endphp
+                        <div class="{{ $vc['bg'] }} rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
+                            <div class="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                            <div class="relative z-10">
+                                <p class="text-white/70 text-xs uppercase tracking-widest font-semibold mb-2">Tu Perfil Vocacional Dominante</p>
+                                <div class="flex items-center gap-4 mb-5">
+                                    <span class="text-4xl">{{ $vocationalResult->icon }}</span>
+                                    <h2 class="font-lexend text-2xl font-bold">{{ $vocationalResult->dominant_name }}</h2>
+                                </div>
+                                <!-- Score bars -->
+                                <div class="space-y-3">
+                                    @foreach($areas as $area)
+                                        <div>
+                                            <div class="flex justify-between text-xs mb-1">
+                                                <span class="font-medium text-white/80">{{ $area['name'] }}</span>
+                                                <span class="font-bold text-white">{{ $vocationalResult->{$area['key']} }}/30</span>
+                                            </div>
+                                            <div class="w-full bg-white/20 rounded-full h-1.5">
+                                                <div class="h-1.5 bg-white rounded-full transition-all duration-700"
+                                                     style="width: {{ round(($vocationalResult->{$area['key']} / 30) * 100) }}%"></div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <!-- Suggested careers -->
+                                @if(count($vocationalResult->careers_suggested))
+                                    <div class="mt-6 pt-5 border-t border-white/20">
+                                        <p class="text-white/70 text-xs font-semibold uppercase tracking-wider mb-3">Carreras Sugeridas</p>
+                                        <div class="flex flex-wrap gap-2">
+                                            @foreach($vocationalResult->careers_suggested as $career)
+                                                <span class="{{ $vc['badge'] }} backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold text-white">{{ $career }}</span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                                <a href="{{ route('vocacional.test') }}"
+                                   class="inline-block mt-8 px-5 py-2 bg-white/20 hover:bg-white/30 text-white text-xs font-bold rounded-stitch transition-colors">
+                                    🔄 Repetir el test
+                                </a>
+                            </div>
+                        </div>
+                    @else
+                        <!-- Prompt to take test -->
+                        <div class="bg-white border border-stitch-outline/10 rounded-stitch p-8 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+                            <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">🧭</div>
+                            <div>
+                                <h2 class="font-lexend text-xl font-bold text-stitch-primary">Descubre tu perfil vocacional</h2>
+                                <p class="text-stitch-on-surface-variant text-sm mt-1">Responde 30 preguntas y encuentra las carreras que mejor se adaptan a tus fortalezas.</p>
+                                <a href="{{ route('vocacional.test') }}" class="inline-block mt-3 px-5 py-2.5 bg-stitch-primary text-white text-sm font-bold rounded-stitch hover:scale-105 transition-all">Iniciar Test Vocacional →</a>
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Active Challenges -->
                     <div class="space-y-6">
@@ -41,14 +121,36 @@
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
                             </div>
                             <div>
-                                <h2 class="font-lexend text-xl font-bold text-stitch-primary">Feedback Hub</h2>
-                                <p class="text-xs text-stitch-on-surface-variant">Comentarios recientes de mentores</p>
+                                <h2 class="font-lexend text-xl font-bold text-stitch-primary">Feedback de Mentores</h2>
+                                <p class="text-xs text-stitch-on-surface-variant">Retroalimentación sobre tus entregas</p>
                             </div>
                         </div>
 
-                        <div class="p-6 rounded-stitch bg-stitch-background text-center py-8">
-                            <p class="text-stitch-on-surface-variant italic text-sm">Aún no hay comentarios disponibles.</p>
-                        </div>
+                        @forelse(auth()->user()->taskSubmissions()->with('challenge')->whereNotNull('feedback')->latest('reviewed_at')->get() as $sub)
+                            <div class="p-5 rounded-stitch bg-stitch-background border border-stitch-outline/10 mb-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-bold text-sm text-stitch-primary">{{ $sub->challenge->title ?? 'Reto' }}</span>
+                                    <div class="flex items-center gap-2">
+                                        @if($sub->score !== null)
+                                            <span class="text-xs font-bold text-stitch-primary">{{ $sub->score }}/100</span>
+                                        @endif
+                                        @if($sub->status === 'approved')
+                                            <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-bold">✓ Aprobada</span>
+                                        @else
+                                            <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-bold">✗ Rechazada</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <p class="text-sm text-stitch-on-surface-variant leading-relaxed">{{ $sub->feedback }}</p>
+                                @if($sub->reviewed_at)
+                                    <p class="text-xs text-stitch-on-surface-variant mt-2 opacity-60">{{ $sub->reviewed_at->format('d/m/Y H:i') }}</p>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="p-6 rounded-stitch bg-stitch-background text-center py-8">
+                                <p class="text-stitch-on-surface-variant italic text-sm">Aún no hay comentarios disponibles.</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
@@ -90,19 +192,14 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <!-- Task Modal Floating Window -->
+        <!-- Task Modal -->
         <div x-show="openTaskModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                
                 <div x-show="openTaskModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" @click="openTaskModal = false" aria-hidden="true"></div>
-
-                <!-- Center align trick -->
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
                 <div x-show="openTaskModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-[2rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-stitch-outline/10">
                     <form method="POST" action="{{ route('challenges.submit', 1) }}" enctype="multipart/form-data">
                         @csrf
@@ -111,14 +208,13 @@
                                 <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
                                     <span class="px-3 py-1 bg-stitch-secondary/10 text-stitch-secondary rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">Redes</span>
                                     <h3 class="text-xl leading-6 font-lexend font-bold text-stitch-primary mb-2" id="modal-title">
-                                        Enlistar componentes de res y PC
+                                        Enlistar componentes de red y PC
                                     </h3>
                                     <div class="mt-3">
                                         <p class="text-sm text-stitch-on-surface-variant leading-relaxed">
                                             <strong>Especificaciones:</strong> Elabora un documento donde enlistes detalladamente los componentes clave de hardware de una computadora (CPU, RAM, etc.) en conjunto con los dispositivos principales de comunicación (Routers, Switches, etc.).
                                         </p>
                                     </div>
-                                    
                                     <!-- File Upload Area -->
                                     <div class="mt-6 border-2 border-dashed border-stitch-primary/30 rounded-stitch p-8 flex flex-col items-center justify-center bg-stitch-primary/5 hover:bg-stitch-primary/10 transition-colors cursor-pointer text-center relative group">
                                         <input type="file" name="file" accept=".pdf,.docx" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : ''" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />

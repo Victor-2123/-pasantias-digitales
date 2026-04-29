@@ -1,12 +1,35 @@
 <?php
 
+use App\Http\Controllers\CareerController;
+use App\Http\Controllers\MentorReviewController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TaskSubmissionController;
 use App\Http\Controllers\TestVocacionalController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Public routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// ── Career routes (public) ─────────────────────────────────────────────
+Route::get('/careers', [CareerController::class, 'index'])->name('careers.index');
+Route::get('/careers/{slug}', [CareerController::class, 'show'])->name('careers.show');
+
+// ── Vocational Test (public) ───────────────────────────────────────────
+Route::get('/test-vocacional', [TestVocacionalController::class, 'index'])->name('vocacional.test');
+
+/*
+|--------------------------------------------------------------------------
+| Auth + Verified routes
+|--------------------------------------------------------------------------
+*/
 
 // Start registration flow for a specific user type (estudiante/maestro)
 Route::get('/register/prepare/{type}', [App\Http\Controllers\Auth\RegisteredUserController::class, 'prepare'])
@@ -16,60 +39,59 @@ Route::get('/register/prepare/{type}', [App\Http\Controllers\Auth\RegisteredUser
 Route::post('/register/prepare', [App\Http\Controllers\Auth\RegisteredUserController::class, 'prepareStore'])
     ->name('register.prepare.store');
 
-Route::get('/dashboard', function () {
-    $hasSubmittedChallenge = \App\Models\TaskSubmission::where('user_id', auth()->id())
-        ->where('challenge_id', 1)
-        ->exists();
+Route::middleware(['auth', 'verified'])->group(function () {
 
-    return view('dashboard', compact('hasSubmittedChallenge'));
-})->middleware(['auth', 'verified'])->name('dashboard');
+    // ── Dashboard ──────────────────────────────────────────────────────
+    Route::get('/dashboard', function () {
+        $hasSubmittedChallenge = \App\Models\TaskSubmission::where('user_id', auth()->id())
+            ->where('challenge_id', 1)
+            ->exists();
 
-Route::get('/mis-cursos', function () {
-    if (auth()->user()->user_type === 'maestro') {
-        $challenge = \App\Models\Challenge::where('mentor_id', auth()->id())->first() ?? \App\Models\Challenge::first();
-        $students = \App\Models\User::where('user_type', 'estudiante')
-            ->with(['taskSubmissions' => function($q) use ($challenge) {
-                if ($challenge) {
-                    $q->where('challenge_id', $challenge->id);
-                }
-            }])->get();
-        return view('courses.index', compact('students', 'challenge'));
-    }
+        $vocationalResult = auth()->user()->vocationalTestResult;
 
-    $hasSubmittedChallenge = \App\Models\TaskSubmission::where('user_id', auth()->id())
-        ->where('challenge_id', 1)
-        ->exists();
+        return view('dashboard', compact('hasSubmittedChallenge', 'vocationalResult'));
+    })->name('dashboard');
 
-    return view('courses.index', compact('hasSubmittedChallenge'));
-})->middleware(['auth', 'verified'])->name('courses.index');
+    // ── Mis Cursos ─────────────────────────────────────────────────────
+    Route::get('/mis-cursos', function () {
+        if (auth()->user()->user_type === 'maestro') {
+            $challenge = \App\Models\Challenge::where('mentor_id', auth()->id())->first() ?? \App\Models\Challenge::first();
+            $students = \App\Models\User::where('user_type', 'estudiante')
+                ->with(['taskSubmissions' => function ($q) use ($challenge) {
+                    if ($challenge) {
+                        $q->where('challenge_id', $challenge->id);
+                    }
+                }])->get();
+            return view('courses.index', compact('students', 'challenge'));
+        }
 
-// Role specific dashboards
-Route::get('/dashboard/mentor', function () {
-    return view('dashboard.mentor');
-})->middleware(['auth', 'verified'])->name('dashboard.mentor');
+        $hasSubmittedChallenge = \App\Models\TaskSubmission::where('user_id', auth()->id())
+            ->where('challenge_id', 1)
+            ->exists();
 
-// Career routes
-Route::get('/careers', function () {
-    return view('careers.index');
-})->name('careers.index');
+        return view('courses.index', compact('hasSubmittedChallenge'));
+    })->middleware('auth')->name('courses.index');
 
-// Vocational Test
-Route::get('/test-vocacional', [TestVocacionalController::class, 'index'])->name('vocacional.test');
+    // ── Mentor dashboard ───────────────────────────────────────────────
+    Route::get('/dashboard/mentor', [MentorReviewController::class, 'index'])->name('dashboard.mentor');
 
-Route::get('/careers/software-architecture', function () {
-    return view('careers.show');
-})->name('careers.show');
+    // ── Task Submissions ───────────────────────────────────────────────
+    Route::post('/challenges/{challenge}/submit', [TaskSubmissionController::class, 'store'])->name('challenges.submit');
+    // Mentor review (PATCH to keep it RESTful)
+    Route::patch('/submissions/{submission}/review', [MentorReviewController::class, 'review'])->name('submissions.review');
 
-Route::middleware('auth')->group(function () {
+    // ── Vocational Test Save (JSON, authenticated only) ────────────────
+    Route::post('/test-vocacional/save', [TestVocacionalController::class, 'save'])->name('vocacional.save');
+
+    // ── Profile ────────────────────────────────────────────────────────
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::post('/challenges/{challenge}/submit', [\App\Http\Controllers\TaskSubmissionController::class, 'store'])->name('challenges.submit');
 
-    Route::get('/usuarios', function () {
-        $users = \App\Models\User::orderBy('created_at', 'desc')->get();
-        return view('usuarios.index', compact('users'));
-    })->name('usuarios.index');
+    // ── Gestión de Usuarios (Admin only – enforced inside controller) ──
+    Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
+    Route::patch('/usuarios/{user}/role', [UsuarioController::class, 'changeRole'])->name('usuarios.changeRole');
+    Route::patch('/usuarios/{user}/suspend', [UsuarioController::class, 'toggleSuspend'])->name('usuarios.toggleSuspend');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
