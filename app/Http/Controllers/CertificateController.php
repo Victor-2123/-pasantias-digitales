@@ -2,39 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\VocationalTestResult;
+use App\Models\TaskSubmission;
+use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Auth;
 
 class CertificateController extends Controller
 {
-    /** Download vocational test result as PDF */
     public function vocacional()
     {
-        $user   = Auth::user();
+        $user = auth()->user();
         $result = $user->vocationalTestResult;
 
-        abort_unless($result, 404, 'No tienes resultados del test vocacional guardados.');
+        if (!$result) {
+            return redirect()->route('vocacional.test')->with('error', 'Debes completar el test vocacional primero.');
+        }
 
-        // Obtener los desafíos aprobados por el usuario
-        $submissions = $user->taskSubmissions()->with('challenge.career')->where('status', 'approved')->get();
+        // Add some helper data for the view
+        $dominantKey = $result->dominant_area; // e.g. 'A'
+        $meta = [
+            'A' => ['dominant_name' => 'Ingeniería y Tecnología', 'color' => 'blue',   'icon' => '💻'],
+            'B' => ['dominant_name' => 'Salud y Bienestar',        'color' => 'green',  'icon' => '🏥'],
+            'C' => ['dominant_name' => 'Negocios y Ciencias Soc.', 'color' => 'amber',  'icon' => '💼'],
+            'D' => ['dominant_name' => 'Artes, Diseño y Educación','color' => 'violet', 'icon' => '🎨'],
+        ];
 
-        $pdf = Pdf::loadView('certificates.vocacional', compact('user', 'result', 'submissions'))
-                  ->setPaper('a4', 'portrait');
+        $result->dominant_name = $meta[$dominantKey]['dominant_name'] ?? 'Área General';
+        $result->color = $meta[$dominantKey]['color'] ?? 'blue';
+        $result->icon = $meta[$dominantKey]['icon'] ?? '🎯';
+        
+        // Mock careers suggested if not in DB (assuming JSON field 'careers_suggested')
+        $result->careers_suggested = $result->careers_suggested ?? [];
 
-        return $pdf->download("Reporte_Vocacional_{$user->name}.pdf");
+        $submissions = TaskSubmission::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->with('challenge.career')
+            ->get();
+
+        $pdf = Pdf::loadView('certificates.vocacional', compact('user', 'result', 'submissions'));
+        return $pdf->download('Reporte_Vocacional_' . str_replace(' ', '_', $user->name) . '.pdf');
     }
 
-    /** Download approved challenge certificate as PDF */
     public function pasantia()
     {
-        $user        = Auth::user();
-        $submissions = $user->taskSubmissions()->with('challenge')->where('status', 'approved')->get();
+        $user = auth()->user();
+        $submissions = TaskSubmission::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->with('challenge.company')
+            ->get();
 
-        abort_if($submissions->isEmpty(), 404, 'Aún no tienes desafíos aprobados.');
+        if ($submissions->isEmpty()) {
+            return redirect()->back()->with('error', 'Aún no has completado ninguna pasantía/desafío.');
+        }
 
-        $pdf = Pdf::loadView('certificates.pasantia', compact('user', 'submissions'))
-                  ->setPaper('a4', 'landscape');
-
-        return $pdf->download("Constancia_Pasantia_{$user->name}.pdf");
+        $pdf = Pdf::loadView('certificates.pasantia', compact('user', 'submissions'));
+        return $pdf->download('Certificado_Pasantias_' . str_replace(' ', '_', $user->name) . '.pdf');
     }
 }

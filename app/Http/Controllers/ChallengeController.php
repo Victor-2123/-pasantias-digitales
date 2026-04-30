@@ -5,114 +5,94 @@ namespace App\Http\Controllers;
 use App\Models\Challenge;
 use App\Models\Career;
 use App\Models\Company;
+use App\Models\LearningPath;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class ChallengeController extends Controller
 {
-    /**
-     * Display a listing of challenges for the mentor.
-     */
     public function index()
     {
-        $challenges = Challenge::where('mentor_id', auth()->id())
-            ->with(['career', 'company'])
-            ->latest()
-            ->get();
+        $query = Challenge::with('career')->orderBy('created_at', 'desc');
+
+        if (!auth()->user()->isAdmin()) {
+            $query->where('mentor_id', auth()->id());
+        }
+
+        $challenges = $query->get();
 
         return view('challenges.manage', compact('challenges'));
     }
 
-    /**
-     * Show the form for creating a new challenge.
-     */
     public function create()
     {
-        $careers = Career::all();
-        $companies = Company::all();
-        return view('challenges.create', compact('careers', 'companies'));
+        $careers = Career::orderBy('name')->get();
+        $companies = Company::orderBy('name')->get();
+        $learningPaths = LearningPath::orderBy('title')->get();
+
+        return view('challenges.create', compact('careers', 'companies', 'learningPaths'));
     }
 
-    /**
-     * Store a newly created challenge in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'career_id'   => 'required|exists:careers,id',
-            'company_id'  => 'nullable|exists:companies,id',
-            'difficulty'  => 'required|in:Fácil,Intermedio,Avanzado',
-            'expires_at'  => 'nullable|date|after:today',
+            'career_id' => 'required|exists:careers,id',
+            'company_id' => 'nullable|exists:companies,id',
+            'learning_path_id' => 'nullable|exists:learning_paths,id',
+            'difficulty' => 'required|string|in:Básico,Intermedio,Avanzado',
+            'expires_at' => 'nullable|date',
         ]);
 
-        $challenge = Challenge::create([
-            'title'       => $validated['title'],
-            'description' => $validated['description'],
-            'career_id'   => $validated['career_id'],
-            'company_id'  => $validated['company_id'],
-            'mentor_id'   => auth()->id(),
-            'difficulty'  => $validated['difficulty'],
-            'expires_at'  => $validated['expires_at'],
-            'order'       => Challenge::where('career_id', $validated['career_id'])->count() + 1,
-        ]);
+        $validated['mentor_id'] = auth()->id();
 
-        return redirect()->route('challenges.manage')
-            ->with('success', '¡Desafío creado exitosamente!');
+        Challenge::create($validated);
+
+        return redirect()->route('challenges.manage')->with('success', 'Reto creado exitosamente.');
     }
 
-    /**
-     * Show the form for editing the specified challenge.
-     */
     public function edit(Challenge $challenge)
     {
-        // Ensure only the mentor who created it can edit
-        if ($challenge->mentor_id !== auth()->id()) {
+        // Enforce ownership or admin
+        if ($challenge->mentor_id !== auth()->id() && !auth()->user()->isAdmin()) {
             abort(403);
         }
 
-        $careers = Career::all();
-        $companies = Company::all();
-        return view('challenges.edit', compact('challenge', 'careers', 'companies'));
+        $careers = Career::orderBy('name')->get();
+        $companies = Company::orderBy('name')->get();
+        $learningPaths = LearningPath::orderBy('title')->get();
+
+        return view('challenges.edit', compact('challenge', 'careers', 'companies', 'learningPaths'));
     }
 
-    /**
-     * Update the specified challenge in storage.
-     */
     public function update(Request $request, Challenge $challenge)
     {
-        if ($challenge->mentor_id !== auth()->id()) {
+        if ($challenge->mentor_id !== auth()->id() && !auth()->user()->isAdmin()) {
             abort(403);
         }
 
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'career_id'   => 'required|exists:careers,id',
-            'company_id'  => 'nullable|exists:companies,id',
-            'difficulty'  => 'required|in:Fácil,Intermedio,Avanzado',
-            'expires_at'  => 'nullable|date|after:today',
+            'career_id' => 'required|exists:careers,id',
+            'company_id' => 'nullable|exists:companies,id',
+            'learning_path_id' => 'nullable|exists:learning_paths,id',
+            'difficulty' => 'required|string|in:Básico,Intermedio,Avanzado',
+            'expires_at' => 'nullable|date',
         ]);
 
         $challenge->update($validated);
 
-        return redirect()->route('challenges.manage')
-            ->with('success', 'Desafío actualizado correctamente.');
+        return redirect()->route('challenges.manage')->with('success', 'Reto actualizado exitosamente.');
     }
 
-    /**
-     * Remove the specified challenge from storage.
-     */
     public function destroy(Challenge $challenge)
     {
-        if ($challenge->mentor_id !== auth()->id()) {
+        if ($challenge->mentor_id !== auth()->id() && !auth()->user()->isAdmin()) {
             abort(403);
         }
 
         $challenge->delete();
-
-        return redirect()->route('challenges.manage')
-            ->with('success', 'Desafío eliminado.');
+        return redirect()->route('challenges.manage')->with('success', 'Reto eliminado exitosamente.');
     }
 }

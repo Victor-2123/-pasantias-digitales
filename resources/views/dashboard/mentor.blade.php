@@ -17,7 +17,13 @@
                         </div>
                         <!-- Abstract decoration -->
                         <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-stitch-secondary/20 rounded-full blur-3xl"></div>
-                        <div class="absolute right-10 top-10 w-24 h-24 border-4 border-white/10 rounded-full"></div>
+                        <div class="absolute right-10 top-1/2 -translate-y-1/2 w-32 h-32 border-4 border-white/20 rounded-full overflow-hidden flex items-center justify-center bg-white/5 backdrop-blur-sm shadow-xl">
+                            @if(auth()->user()->profile_photo)
+                                <img src="{{ asset('storage/'.auth()->user()->profile_photo) }}" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-4xl font-bold text-white opacity-40 font-lexend">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Quick Stats -->
@@ -86,8 +92,7 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-3 flex-shrink-0">
-                                        <a href="{{ asset('storage/' . $submission->file_path) }}"
-                                           target="_blank"
+                                        <a href="{{ route('submissions.download', $submission) }}"
                                            class="text-xs font-bold text-stitch-secondary hover:underline flex items-center gap-1">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                             {{ $submission->original_name ?? 'Ver archivo' }}

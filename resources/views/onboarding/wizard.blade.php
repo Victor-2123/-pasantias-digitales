@@ -22,7 +22,7 @@
                         </div>
                         <div class="flex items-center gap-3 opacity-50">
                             <div class="w-2 h-2 rounded-full bg-white/50"></div>
-                            <span class="text-xs font-medium text-white">Foto de Perfil</span>
+                            <span class="text-xs font-medium text-white">Biografía</span>
                         </div>
                     </div>
 
@@ -47,20 +47,11 @@
                             <x-input-error class="mt-2" :messages="$errors->get('school')" />
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <!-- Age -->
-                            <div>
-                                <x-input-label for="age" value="Edad" />
-                                <x-text-input id="age" name="age" type="number" class="mt-1 block w-full" :value="old('age')" required min="15" max="100" />
-                                <x-input-error class="mt-2" :messages="$errors->get('age')" />
-                            </div>
-
-                            <!-- Photo -->
-                            <div>
-                                <x-input-label for="profile_photo" value="Foto de Perfil" />
-                                <input id="profile_photo" name="profile_photo" type="file" accept="image/*" class="mt-1 block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-stitch-primary file:text-white hover:file:bg-stitch-primary/90" />
-                                <x-input-error class="mt-2" :messages="$errors->get('profile_photo')" />
-                            </div>
+                        <!-- Age -->
+                        <div>
+                            <x-input-label for="age" value="Edad" />
+                            <x-text-input id="age" name="age" type="number" class="mt-1 block w-full" :value="old('age')" required min="15" max="100" />
+                            <x-input-error class="mt-2" :messages="$errors->get('age')" />
                         </div>
 
                         <!-- Bio -->

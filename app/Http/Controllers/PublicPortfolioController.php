@@ -4,58 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\LearningPath;
-use App\Models\VocationalTestResult;
 use Illuminate\Http\Request;
 
 class PublicPortfolioController extends Controller
 {
-    /**
-     * List all public portfolios.
-     */
     public function index()
     {
         $students = User::where('user_type', 'estudiante')
             ->where('is_public', true)
-            ->whereNotNull('username')
-            ->orderBy('name')
+            ->where('is_profile_complete', true)
             ->paginate(12);
 
         return view('portfolio.index', compact('students'));
     }
 
-    /**
-     * Display the public portfolio of a student.
-     */
-    public function show(string $username)
+    public function show($username)
     {
-        $user = User::where('username', $username)->firstOrFail();
+        $user = User::where('username', $username)
+            ->where('is_public', true)
+            ->firstOrFail();
 
-        // Security check: If the profile is not public, only the owner can see it
-        if (!$user->is_public && auth()->id() !== $user->id) {
-            abort(403, 'Este perfil es privado.');
-        }
-
-        // Load vocational result
         $vocationalResult = $user->vocationalTestResult;
+        
+        // A path is completed if ALL its challenges have an approved submission from this user
+        $completedPaths = LearningPath::with('challenges.submissions')->get()->filter(function($path) use ($user) {
+            $total = $path->challenges->count();
+            if ($total === 0) return false;
+            
+            $approvedCount = $path->challenges->filter(function($challenge) use ($user) {
+                return $challenge->submissions->where('user_id', $user->id)->where('status', 'approved')->isNotEmpty();
+            })->count();
 
-        // Load completed learning paths (Badges)
-        // A path is completed if all its challenges have an approved submission by the user
-        $learningPaths = LearningPath::with('challenges')->get();
-        $completedPaths = [];
-
-        foreach ($learningPaths as $path) {
-            $totalChallenges = $path->challenges->count();
-            if ($totalChallenges === 0) continue;
-
-            $approvedSubmissions = $user->taskSubmissions()
-                ->whereIn('challenge_id', $path->challenges->pluck('id'))
-                ->where('status', 'approved')
-                ->count();
-
-            if ($approvedSubmissions === $totalChallenges) {
-                $completedPaths[] = $path;
-            }
-        }
+            return $total === $approvedCount;
+        });
 
         return view('portfolio.show', compact('user', 'vocationalResult', 'completedPaths'));
     }

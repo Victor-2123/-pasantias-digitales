@@ -61,35 +61,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified', 'check.profile'])->group(function () {
 
     // ── Dashboard ──────────────────────────────────────────────────────
-    Route::get('/dashboard', function () {
-        $hasSubmittedChallenge = \App\Models\TaskSubmission::where('user_id', auth()->id())
-            ->where('challenge_id', 1)
-            ->exists();
-
-        $vocationalResult = auth()->user()->vocationalTestResult;
-
-        return view('dashboard', compact('hasSubmittedChallenge', 'vocationalResult'));
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     // ── Mis Cursos ─────────────────────────────────────────────────────
-    Route::get('/mis-cursos', function () {
-        if (auth()->user()->user_type === 'maestro') {
-            $challenge = \App\Models\Challenge::where('mentor_id', auth()->id())->first() ?? \App\Models\Challenge::first();
-            $students = \App\Models\User::where('user_type', 'estudiante')
-                ->with(['taskSubmissions' => function ($q) use ($challenge) {
-                    if ($challenge) {
-                        $q->where('challenge_id', $challenge->id);
-                    }
-                }])->get();
-            return view('courses.index', compact('students', 'challenge'));
-        }
-
-        $hasSubmittedChallenge = \App\Models\TaskSubmission::where('user_id', auth()->id())
-            ->where('challenge_id', 1)
-            ->exists();
-
-        return view('courses.index', compact('hasSubmittedChallenge'));
-    })->middleware('auth')->name('courses.index');
+    Route::get('/mis-cursos', [\App\Http\Controllers\DashboardController::class, 'courses'])->name('courses.index');
 
     // ── Mentor dashboard ───────────────────────────────────────────────
     Route::get('/dashboard/mentor', [MentorReviewController::class, 'index'])->name('dashboard.mentor');

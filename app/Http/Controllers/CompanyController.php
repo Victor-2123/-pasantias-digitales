@@ -5,114 +5,74 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
     public function index()
     {
-        $companies = Company::with('challenges')->get();
+        $companies = Company::with('challenges')->orderBy('name')->get();
         return view('companies.index', compact('companies'));
     }
 
     public function show(Company $company)
     {
-        $challenges = $company->challenges()->with('career')->get();
-        return view('companies.show', compact('company', 'challenges'));
+        $company->load('challenges.career');
+        return view('companies.show', compact('company'));
     }
-
-    // ── Admin CRUD Methods ───────────────────────────────────────────────
 
     public function manage()
     {
-        $this->authorizeAdmin();
-        $companies = Company::latest()->get();
+        $companies = Company::withCount('challenges')->orderBy('name')->paginate(20);
         return view('companies.manage', compact('companies'));
     }
 
     public function create()
     {
-        $this->authorizeAdmin();
         return view('companies.create');
     }
 
     public function store(Request $request)
     {
-        $this->authorizeAdmin();
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'sector'      => 'required|string|max:255',
-            'website'     => 'nullable|url',
-            'description' => 'required|string',
-            'color'       => 'required|string',
-            'logo'        => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'name' => 'required|string|max:255',
+            'sector' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'logo' => 'nullable|string',
+            'website' => 'nullable|url',
         ]);
 
-        $logoPath = null;
-        if ($request->hasFile('logo')) {
-            $logoPath = $request->file('logo')->store('companies/logos', 'public');
-        }
+        $validated['slug'] = Str::slug($validated['name']);
 
-        Company::create([
-            'name'        => $validated['name'],
-            'slug'        => Str::slug($validated['name']),
-            'sector'      => $validated['sector'],
-            'website'     => $validated['website'],
-            'description' => $validated['description'],
-            'color'       => $validated['color'],
-            'logo'        => $logoPath,
-        ]);
+        Company::create($validated);
 
-        return redirect()->route('companies.manage')->with('success', 'Empresa creada correctamente.');
+        return redirect()->route('companies.manage')->with('success', 'Empresa creada exitosamente.');
     }
 
     public function edit(Company $company)
     {
-        $this->authorizeAdmin();
         return view('companies.edit', compact('company'));
     }
 
     public function update(Request $request, Company $company)
     {
-        $this->authorizeAdmin();
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'sector'      => 'required|string|max:255',
-            'website'     => 'nullable|url',
-            'description' => 'required|string',
-            'color'       => 'required|string',
-            'logo'        => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'name' => 'required|string|max:255',
+            'sector' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'logo' => 'nullable|string',
+            'website' => 'nullable|url',
         ]);
 
-        $data = $validated;
-        $data['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = Str::slug($validated['name']);
 
-        if ($request->hasFile('logo')) {
-            if ($company->logo) {
-                Storage::disk('public')->delete($company->logo);
-            }
-            $data['logo'] = $request->file('logo')->store('companies/logos', 'public');
-        }
+        $company->update($validated);
 
-        $company->update($data);
-
-        return redirect()->route('companies.manage')->with('success', 'Empresa actualizada.');
+        return redirect()->route('companies.manage')->with('success', 'Empresa actualizada exitosamente.');
     }
 
     public function destroy(Company $company)
     {
-        $this->authorizeAdmin();
-        if ($company->logo) {
-            Storage::disk('public')->delete($company->logo);
-        }
         $company->delete();
-        return redirect()->route('companies.manage')->with('success', 'Empresa eliminada.');
-    }
-
-    private function authorizeAdmin()
-    {
-        if (auth()->user()->user_type !== 'administrador') {
-            abort(403);
-        }
+        return redirect()->route('companies.manage')->with('success', 'Empresa eliminada exitosamente.');
     }
 }

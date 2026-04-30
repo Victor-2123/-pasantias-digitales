@@ -49,7 +49,7 @@
                         </x-nav-link>
                     @elseif(Auth::user()->user_type === 'estudiante')
                         <x-nav-link :href="route('courses.index')" :active="request()->routeIs('courses.index')">
-                            {{ __('Mis Cursos') }}
+                            {{ __('Mis Retos') }}
                         </x-nav-link>
                         <x-nav-link :href="route('companies.index')" :active="request()->routeIs('companies.*')">
                             {{ __('Empresas Aliadas') }}
@@ -68,8 +68,8 @@
                     <x-dropdown align="right" width="w-96">
                         <x-slot name="trigger">
                             <button class="relative inline-flex items-center p-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31a8.967 8.967 0 0 1-2.312-6.022c0-4.474-3.484-8.113-7.857-8.113s-7.857 3.639-7.857 8.113c0 2.457-.991 4.678-2.585 6.262M14.857 17.082a23.848 23.848 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
                                 @if(auth()->user()->unreadNotifications->count() > 0)
                                     <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
@@ -192,7 +192,7 @@
                 </x-responsive-nav-link>
             @elseif(Auth::user()->user_type === 'estudiante')
                 <x-responsive-nav-link :href="route('courses.index')" :active="request()->routeIs('courses.index')">
-                    {{ __('Mis Cursos') }}
+                    {{ __('Mis Retos') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('companies.index')" :active="request()->routeIs('companies.*')">
                     {{ __('Empresas Aliadas') }}

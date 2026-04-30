@@ -44,18 +44,9 @@
                                         <x-text-input id="modal_school" name="school" type="text" class="mt-1 block w-full text-sm" :value="old('school', $user->school)" required />
                                     </div>
 
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <x-input-label for="modal_age" value="Edad" />
-                                            <x-text-input id="modal_age" name="age" type="number" class="mt-1 block w-full text-sm" :value="old('age', $user->age)" required min="15" />
-                                        </div>
-                                        <div>
-                                            <x-input-label value="Foto" />
-                                            <label for="modal_photo" class="mt-1 flex items-center justify-center px-4 py-2 bg-gray-50 border border-dashed border-gray-300 rounded-stitch cursor-pointer hover:bg-gray-100 transition-colors">
-                                                <span class="text-[10px] font-bold text-gray-500 uppercase">Subir Imagen</span>
-                                                <input type="file" id="modal_photo" name="profile_photo" class="hidden" accept="image/*">
-                                            </label>
-                                        </div>
+                                    <div>
+                                        <x-input-label for="modal_age" value="Edad" />
+                                        <x-text-input id="modal_age" name="age" type="number" class="mt-1 block w-full text-sm" :value="old('age', $user->age)" required min="15" />
                                     </div>
 
                                     <div>

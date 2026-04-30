@@ -10,21 +10,17 @@ class CheckProfileCompletion
 {
     /**
      * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
-
-        // Only enforce for authenticated students
-        if ($user && $user->user_type === 'estudiante') {
-            // Se ha desactivado la redirección obligatoria por petición del usuario.
-            // El usuario podrá completar su perfil voluntariamente desde la vista de perfil.
-            /*
-            if (!$user->is_profile_complete && !$request->routeIs('onboarding.*') && !$request->is('logout')) {
-                return redirect()->route('onboarding.index');
-            }
-            */
+        // Redirection disabled per user request to allow direct access to dashboard
+        /*
+        if (auth()->check() && auth()->user()->user_type === 'estudiante' && !auth()->user()->is_profile_complete) {
+            return redirect()->route('onboarding.index');
         }
+        */
 
         return $next($request);
     }

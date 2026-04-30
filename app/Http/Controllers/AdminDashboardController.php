@@ -12,34 +12,30 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        // Check if user is admin (using the standard user_type)
-        if (auth()->user()->user_type !== 'administrador') {
-            abort(403);
-        }
-
-        // 1. KPIs
         $stats = [
             'total_students' => User::where('user_type', 'estudiante')->count(),
-            'total_mentors'  => User::where('user_type', 'maestro')->count(),
-            'total_tasks'    => TaskSubmission::count(),
+            'total_mentors' => User::where('user_type', 'maestro')->count(),
+            'total_tasks' => TaskSubmission::where('status', 'approved')->count(),
         ];
 
-        // 2. Vocational Test Distribution (for the chart)
-        $vocationalDistribution = VocationalTestResult::select('dominant_area', DB::raw('count(*) as total'))
-            ->groupBy('dominant_area')
-            ->get()
-            ->mapWithKeys(function ($item) {
-                $labels = [
-                    'A' => 'Ingeniería y Tecnología',
-                    'B' => 'Salud y Bienestar',
-                    'C' => 'Negocios y Sociales',
-                    'D' => 'Artes y Educación',
-                ];
-                return [$labels[$item->dominant_area] ?? 'Otros' => $item->total];
-            });
+        // Distribution mapping
+        $distributionMap = [
+            'A' => 'Ingeniería y Tecnología',
+            'B' => 'Salud y Bienestar',
+            'C' => 'Negocios y Sociales',
+            'D' => 'Artes y Educación',
+        ];
 
-        // 3. Recent Activity (Bonus for premium feel)
-        $recentUsers = User::latest()->take(5)->get();
+        $results = VocationalTestResult::select('dominant_area', DB::raw('count(*) as total'))
+            ->groupBy('dominant_area')
+            ->get();
+
+        $vocationalDistribution = collect($distributionMap)->mapWithKeys(function($label, $key) use ($results) {
+            $found = $results->where('dominant_area', $key)->first();
+            return [$label => $found ? $found->total : 0];
+        });
+
+        $recentUsers = User::orderBy('created_at', 'desc')->take(10)->get();
 
         return view('admin.dashboard', compact('stats', 'vocationalDistribution', 'recentUsers'));
     }
