@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TaskSubmission extends Model
 {
@@ -35,6 +36,11 @@ class TaskSubmission extends Model
     public function reviewer()
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->orderBy('created_at');
     }
 
     public function isPending(): bool

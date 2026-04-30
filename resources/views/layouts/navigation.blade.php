@@ -29,6 +29,9 @@
                         <x-nav-link :href="route('courses.index')" :active="request()->routeIs('courses.index')">
                             {{ __('Mis Cursos') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('companies.index')" :active="request()->routeIs('companies.*')">
+                            {{ __('Empresas Aliadas') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -101,6 +104,9 @@
             @else
                 <x-responsive-nav-link :href="route('courses.index')" :active="request()->routeIs('courses.index')">
                     {{ __('Mis Cursos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('companies.index')" :active="request()->routeIs('companies.*')">
+                    {{ __('Empresas Aliadas') }}
                 </x-responsive-nav-link>
             @endif
         </div>

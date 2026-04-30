@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\CareerController;
+use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\LearningPathController;
 use App\Http\Controllers\MentorReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskSubmissionController;
@@ -21,6 +25,10 @@ Route::get('/', function () {
 // ── Career routes (public) ─────────────────────────────────────────────
 Route::get('/careers', [CareerController::class, 'index'])->name('careers.index');
 Route::get('/careers/{slug}', [CareerController::class, 'show'])->name('careers.show');
+
+// ── Companies / Allies (public) ────────────────────────────────────────
+Route::get('/empresas', [CompanyController::class, 'index'])->name('companies.index');
+Route::get('/empresas/{company:slug}', [CompanyController::class, 'show'])->name('companies.show');
 
 // ── Vocational Test (public) ───────────────────────────────────────────
 Route::get('/test-vocacional', [TestVocacionalController::class, 'index'])->name('vocacional.test');
@@ -77,11 +85,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ── Task Submissions ───────────────────────────────────────────────
     Route::post('/challenges/{challenge}/submit', [TaskSubmissionController::class, 'store'])->name('challenges.submit');
-    // Mentor review (PATCH to keep it RESTful)
     Route::patch('/submissions/{submission}/review', [MentorReviewController::class, 'review'])->name('submissions.review');
+
+    // ── Comments (discussion thread on a submission) ────────────────────
+    Route::post('/submissions/{submission}/comments', [CommentController::class, 'store'])->name('submissions.comments.store');
 
     // ── Vocational Test Save (JSON, authenticated only) ────────────────
     Route::post('/test-vocacional/save', [TestVocacionalController::class, 'save'])->name('vocacional.save');
+
+    // ── Learning Paths (Obj 7 – Gamification) ─────────────────────────
+    Route::get('/mi-ruta', [LearningPathController::class, 'index'])->name('learning-paths.index');
+
+    // ── PDF Certificates (Obj 8) ───────────────────────────────────────
+    Route::get('/certificado/vocacional', [CertificateController::class, 'vocacional'])->name('certificates.vocacional');
+    Route::get('/certificado/pasantia', [CertificateController::class, 'pasantia'])->name('certificates.pasantia');
 
     // ── Profile ────────────────────────────────────────────────────────
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

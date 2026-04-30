@@ -187,7 +187,43 @@
                         </div>
                     </div>
 
-                    <!-- Achievement Card -->
+                    {{-- Achievement / Downloads Card --}}
+                    <div class="p-6 rounded-stitch border border-stitch-outline/10 bg-white shadow-sm space-y-3">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-3xl">🏆</div>
+                            <div>
+                                <h4 class="font-bold text-stitch-primary text-sm">Mis Logros</h4>
+                                <p class="text-xs text-stitch-on-surface-variant">Descarga tus constancias</p>
+                            </div>
+                        </div>
+
+                        @if($vocationalResult)
+                            <a href="{{ route('certificates.vocacional') }}"
+                               class="flex items-center gap-3 w-full px-4 py-3 rounded-stitch text-sm font-bold text-white transition-colors"
+                               style="background-color: #1E3A5F;">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Reporte Vocacional (PDF)
+                            </a>
+                        @else
+                            <div class="flex items-center gap-3 w-full px-4 py-3 rounded-stitch text-sm font-medium text-gray-400 bg-gray-50 cursor-not-allowed border border-dashed border-gray-200">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Reporte Vocacional (pendiente test)
+                            </div>
+                        @endif
+
+                        <a href="{{ route('learning-paths.index') }}"
+                           class="flex items-center gap-3 w-full px-4 py-3 rounded-stitch text-sm font-bold transition-colors"
+                           style="background-color: #F5F3FF; color: #6D28D9; border: 1px solid #EDE9FE;">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Ver Mi Ruta de Aprendizaje
+                        </a>
+                    </div>
                     <div class="p-6 rounded-stitch bg-stitch-secondary/10 border border-stitch-secondary/20">
                         <div class="flex items-center gap-4">
                             <div class="text-4xl">🏆</div>

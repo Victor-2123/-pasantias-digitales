@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Challenge extends Model
 {
@@ -17,6 +18,9 @@ class Challenge extends Model
         'mentor_id',
         'difficulty',
         'expires_at',
+        'company_id',
+        'learning_path_id',
+        'order',
     ];
 
     protected $casts = [
@@ -31,5 +35,20 @@ class Challenge extends Model
     public function mentor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'mentor_id');
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function learningPath(): BelongsTo
+    {
+        return $this->belongsTo(LearningPath::class);
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(TaskSubmission::class);
     }
 }
