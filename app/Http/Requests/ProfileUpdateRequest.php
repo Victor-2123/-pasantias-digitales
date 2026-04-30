@@ -27,6 +27,11 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
             'profile_photo' => ['nullable', 'image', 'max:2048'],
+            'age' => ['nullable', 'integer', 'min:15', 'max:100'],
+            'school' => ['nullable', 'string', 'max:255'],
+            'bio' => ['nullable', 'string', 'max:1000'],
+            'username' => ['nullable', 'string', 'alpha_dash', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'is_public' => ['boolean'],
         ];
     }
 }

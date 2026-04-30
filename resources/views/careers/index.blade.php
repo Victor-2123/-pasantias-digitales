@@ -1,73 +1,127 @@
 <x-app-layout>
-    <div class="py-12">
+    <div class="py-12 bg-slate-50 min-h-screen" x-data="{ 
+        search: '', 
+        selectedCategory: 'all',
+        careers: {{ $careers->map(fn($c) => ['name' => $c->name, 'category' => $c->category, 'slug' => $c->slug])->toJson() }},
+        matches(name, category) {
+            const s = this.search.toLowerCase();
+            const n = name.toLowerCase();
+            const catMatch = this.selectedCategory === 'all' || this.selectedCategory === category;
+            return n.includes(s) && catMatch;
+        },
+        countMatches(category) {
+            return this.careers.filter(c => this.matches(c.name, c.category) && (category === 'all' || c.category === category)).length;
+        }
+    }">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="space-y-12">
-                <div class="max-w-3xl">
-                    <h1 class="font-lexend text-4xl font-bold text-stitch-primary mb-4">Catálogo de Carreras</h1>
-                    <p class="text-stitch-on-surface-variant text-lg">
-                        Explora carreras profesionales, conoce el día a día de expertos en la industria y encuentra el mentor perfecto para guiar tu ambición.
-                    </p>
+            <div class="space-y-8">
+                <!-- Header & Search -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div class="max-w-xl">
+                        <h1 class="font-lexend text-4xl font-bold text-stitch-primary mb-4 text-balance">Catálogo de Carreras</h1>
+                        <p class="text-stitch-on-surface-variant text-base leading-relaxed">
+                            Explora carreras profesionales, conoce el día a día de expertos en la industria y encuentra el mentor perfecto para guiar tu ambición.
+                        </p>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="w-full md:w-80 relative group">
+                        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-400 group-focus-within:text-stitch-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input 
+                            type="text" 
+                            x-model="search"
+                            placeholder="Buscar carrera o área..." 
+                            class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-stitch focus:border-stitch-primary focus:ring-4 focus:ring-stitch-primary/10 transition-all text-sm shadow-sm"
+                        >
+                    </div>
                 </div>
 
-                <div class="max-w-4xl mx-auto">
-                    <div class="bg-white p-8 md:p-12 rounded-stitch border border-stitch-outline/10 shadow-sm">
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2 pb-4 border-b border-gray-200">
+                    <button @click="selectedCategory = 'all'" :class="selectedCategory === 'all' ? 'bg-stitch-primary text-white shadow-lg shadow-stitch-primary/20' : 'bg-white text-stitch-on-surface-variant border border-gray-200 hover:bg-gray-50'" class="px-5 py-2 text-xs font-bold rounded-full transition-all uppercase tracking-widest">
+                        Todas
+                    </button>
+                    @php
+                        $categories = [
+                            'A' => 'Ingeniería y Tecnología',
+                            'B' => 'Salud y Bienestar',
+                            'C' => 'Negocios y Ciencias Sociales',
+                            'D' => 'Artes, Diseño y Educación'
+                        ];
+                    @endphp
+                    @foreach($categories as $key => $label)
+                        <button 
+                            @click="selectedCategory = '{{ $key }}'" 
+                            :class="selectedCategory === '{{ $key }}' ? 'bg-stitch-primary text-white shadow-lg shadow-stitch-primary/20' : 'bg-white text-stitch-on-surface-variant border border-gray-200 hover:bg-gray-50'" 
+                            class="px-5 py-2 text-xs font-bold rounded-full transition-all uppercase tracking-widest flex items-center gap-2"
+                        >
+                            {{ $label }}
+                            <span class="opacity-40 text-[10px]" x-text="careers.filter(c => c.category === '{{ $key }}').length"></span>
+                        </button>
+                    @endforeach
+                </div>
 
-                        <div class="mb-10 pb-6 border-b border-stitch-outline/10">
+                <!-- Catalogue Grid -->
+                <div class="bg-white p-8 md:p-12 rounded-[2.5rem] border border-gray-100 shadow-sm min-h-[400px]">
+                    <div class="mb-10 pb-6 border-b border-gray-100 flex justify-between items-end">
+                        <div>
                             <h2 class="font-lexend text-2xl md:text-3xl font-bold text-stitch-primary">Zona Metropolitana</h2>
                             <p class="text-stitch-on-surface-variant text-base mt-2">Tampico, Madero y Altamira</p>
                         </div>
-
-                        @php
-                            $categoryMeta = [
-                                'A' => ['label' => 'Ingeniería y Tecnología',    'colorClass' => 'text-stitch-secondary',  'dotClass' => 'bg-stitch-secondary/50'],
-                                'B' => ['label' => 'Salud y Bienestar',           'colorClass' => 'text-red-500',            'dotClass' => 'bg-red-400'],
-                                'C' => ['label' => 'Negocios y Ciencias Sociales','colorClass' => 'text-green-600',          'dotClass' => 'bg-green-500'],
-                                'D' => ['label' => 'Artes, Diseño y Educación',  'colorClass' => 'text-purple-500',         'dotClass' => 'bg-purple-400'],
-                            ];
-                        @endphp
-
-                        <div class="space-y-12">
-                            {{-- Dynamic groups from database --}}
-                            @forelse($grouped as $categoryKey => $careers)
-                                @php $meta = $categoryMeta[$categoryKey] ?? ['label' => $categoryKey, 'colorClass' => 'text-stitch-primary', 'dotClass' => 'bg-stitch-primary/50']; @endphp
-                                <div>
-                                    <h3 class="text-xs md:text-sm font-bold {{ $meta['colorClass'] }} uppercase tracking-wider mb-6">
-                                        {{ $meta['label'] }}
-                                    </h3>
-                                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm md:text-base text-stitch-on-surface-variant">
-                                        @foreach($careers as $career)
-                                            <li class="flex items-center gap-2">
-                                                <div class="w-1.5 h-1.5 rounded-full {{ $meta['dotClass'] }}"></div>
-                                                <a href="{{ route('careers.show', $career->slug) }}"
-                                                   class="hover:text-stitch-primary hover:underline transition-colors">
-                                                    {{ $career->name }}
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @empty
-                                {{-- Fallback if DB is empty --}}
-                                <p class="text-stitch-on-surface-variant italic text-center py-8">
-                                    No hay carreras disponibles. Ejecuta el seeder para cargar el catálogo.
-                                </p>
-                            @endforelse
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-stitch-primary uppercase tracking-widest bg-stitch-primary/5 px-3 py-1 rounded-full">
+                                <span x-text="countMatches(selectedCategory)"></span> Resultados
+                            </span>
                         </div>
+                    </div>
 
+                    @php
+                        $categoryMeta = [
+                            'A' => ['label' => 'Ingeniería y Tecnología',    'colorClass' => 'text-stitch-secondary',  'dotClass' => 'bg-stitch-secondary/50'],
+                            'B' => ['label' => 'Salud y Bienestar',           'colorClass' => 'text-red-500',            'dotClass' => 'bg-red-400'],
+                            'C' => ['label' => 'Negocios y Ciencias Sociales','colorClass' => 'text-green-600',          'dotClass' => 'bg-green-500'],
+                            'D' => ['label' => 'Artes, Diseño y Educación',  'colorClass' => 'text-purple-500',         'dotClass' => 'bg-purple-400'],
+                        ];
+                    @endphp
+
+                    <div class="space-y-12">
+                        @foreach($grouped as $categoryKey => $careersGroup)
+                            @php $meta = $categoryMeta[$categoryKey] ?? ['label' => $categoryKey, 'colorClass' => 'text-stitch-primary', 'dotClass' => 'bg-stitch-primary/50']; @endphp
+                            
+                            <div x-show="countMatches('{{ $categoryKey }}') > 0" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                                <h3 class="text-xs md:text-sm font-bold {{ $meta['colorClass'] }} uppercase tracking-wider mb-6 flex items-center gap-3">
+                                    {{ $meta['label'] }}
+                                    <div class="flex-1 h-px bg-gray-100"></div>
+                                </h3>
+                                <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-8">
+                                    @foreach($careersGroup as $career)
+                                        <li x-show="matches('{{ $career->name }}', '{{ $career->category }}')" 
+                                            class="flex items-center gap-3 group/item">
+                                            <div class="w-2 h-2 rounded-full {{ $meta['dotClass'] }} group-hover/item:scale-125 transition-transform"></div>
+                                            <a href="{{ route('careers.show', $career->slug) }}"
+                                               class="text-sm md:text-base text-stitch-on-surface-variant hover:text-stitch-primary hover:translate-x-1 transition-all inline-block font-medium">
+                                                {{ $career->name }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endforeach
+
+                        <!-- Empty State -->
+                        <div x-show="countMatches(selectedCategory) === 0" class="text-center py-20">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <h4 class="text-lg font-bold text-stitch-primary font-lexend">No encontramos coincidencias</h4>
+                            <p class="text-stitch-on-surface-variant text-sm mt-2">Intenta con otros términos de búsqueda o cambia la categoría.</p>
+                            <button @click="search = ''; selectedCategory = 'all'" class="mt-6 text-xs font-bold text-stitch-secondary uppercase tracking-widest hover:underline">Limpiar filtros</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Call to Action -->
-                <div class="bg-stitch-primary-container p-12 rounded-[2rem] text-center text-white relative overflow-hidden">
-                    <div class="relative z-10 space-y-6">
-                        <h2 class="font-lexend text-3xl font-bold">¿No estás seguro por dónde empezar?</h2>
-                        <p class="text-white/80 max-w-2xl mx-auto">Realiza nuestro test de habilidades de 5 minutos para encontrar las carreras que mejor se adaptan a tus intereses y fortalezas naturales.</p>
-                        <a href="{{ route('vocacional.test') }}" id="btn-realizar-test"
-                           class="inline-block px-8 py-3 bg-stitch-secondary text-white rounded-stitch font-bold hover:scale-105 transition-transform">
-                            Realizar Test de Habilidades
-                        </a>
-                    </div>
-                    <div class="absolute -left-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
                 </div>
             </div>
         </div>

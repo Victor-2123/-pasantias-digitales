@@ -51,6 +51,9 @@ class MentorReviewController extends Controller
             'reviewed_at' => now(),
         ]);
 
+        // Notify the student
+        $submission->user->notify(new \App\Notifications\ChallengeGradedNotification($submission));
+
         return back()->with('success', 'Calificación guardada exitosamente.');
     }
 }

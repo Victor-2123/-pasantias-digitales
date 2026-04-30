@@ -22,12 +22,23 @@ class ProfileController extends Controller
     }
 
     /**
+     * Display the user's CV profile.
+     */
+    public function show(\App\Models\User $user): View
+    {
+        return view('profile.show', compact('user'));
+    }
+
+    /**
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
-        $user->fill($request->validated());
+        $data = $request->validated();
+        $data['is_public'] = $request->has('is_public');
+        
+        $user->fill($data);
 
         if ($request->hasFile('profile_photo')) {
             // Eliminar foto anterior si existe

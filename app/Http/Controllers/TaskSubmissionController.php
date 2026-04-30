@@ -5,30 +5,64 @@ namespace App\Http\Controllers;
 use App\Models\Challenge;
 use App\Models\TaskSubmission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class TaskSubmissionController extends Controller
 {
+    /**
+     * Store a new task submission with secure file upload.
+     */
     public function store(Request $request, Challenge $challenge)
     {
         $request->validate([
-            'file' => 'required|file|mimes:pdf,docx|max:10240', // 10MB max
+            'file' => 'required|file|mimes:pdf,jpg,jpeg,png,zip|max:20480', // 20MB max
         ]);
 
         $file = $request->file('file');
-        
         $originalName = $file->getClientOriginalName();
-        // Save the file on the "public" disk in the "submissions" directory
-        $path = $file->store('submissions', 'public');
+        
+        // Save to "local" disk (storage/app) for security - NOT publicly accessible
+        $path = $file->store('submissions', 'local');
 
-        TaskSubmission::create([
-            'user_id' => auth()->id(),
-            'challenge_id' => $challenge->id,
-            'file_path' => $path,
+        $submission = TaskSubmission::create([
+            'user_id'       => auth()->id(),
+            'challenge_id'  => $challenge->id,
+            'file_path'     => $path,
             'original_name' => $originalName,
+            'status'        => 'pending',
         ]);
 
-        // In a real application we would flash a message, but since views are forbidden:
-        // the frontend will just receive a redirect back for now.
-        return back()->with('success', 'Tarea entregada exitosamente.');
+        // Notify mentors
+        try {
+            $mentors = \App\Models\User::where('user_type', 'maestro')->get();
+            \Illuminate\Support\Facades\Notification::send($mentors, new \App\Notifications\TaskSubmittedNotification($submission));
+        } catch (\Exception $e) {
+            // Silently fail if notification system is not fully ready
+        }
+
+        return back()->with('success', '¡Evidencia enviada correctamente!');
+    }
+
+    /**
+     * Securely download the submission attachment.
+     */
+    public function download(TaskSubmission $submission)
+    {
+        // Authorization: Only mentors or the student who submitted it
+        if (auth()->user()->user_type !== 'maestro' && 
+            auth()->user()->user_type !== 'administrador' && 
+            auth()->id() !== $submission->user_id) {
+            abort(403, 'No tienes permiso para descargar este archivo.');
+        }
+
+        if (!Storage::disk('local')->exists($submission->file_path)) {
+            abort(404, 'El archivo no existe en el servidor.');
+        }
+
+        return Storage::disk('local')->download(
+            $submission->file_path, 
+            $submission->original_name
+        );
     }
 }

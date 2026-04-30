@@ -259,12 +259,12 @@
                                     </div>
                                     <!-- File Upload Area -->
                                     <div class="mt-6 border-2 border-dashed border-stitch-primary/30 rounded-stitch p-8 flex flex-col items-center justify-center bg-stitch-primary/5 hover:bg-stitch-primary/10 transition-colors cursor-pointer text-center relative group">
-                                        <input type="file" name="file" accept=".pdf,.docx" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : ''" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                                        <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.zip" @change="fileName = $event.target.files[0] ? $event.target.files[0].name : ''" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                                         <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform">
                                             <svg class="h-6 w-6 text-stitch-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                                         </div>
                                         <p class="text-sm font-bold text-stitch-primary" x-text="fileName ? fileName : 'Cargar archivo'"></p>
-                                        <p class="text-xs text-stitch-on-surface-variant mt-1 px-4" x-show="!fileName">Arrastra tu documento o haz clic aquí (.pdf, .docx)</p>
+                                        <p class="text-xs text-stitch-on-surface-variant mt-1 px-4" x-show="!fileName">Formatos permitidos: .pdf, .jpg, .png, .zip (Máx. 20MB)</p>
                                     </div>
                                 </div>
                             </div>

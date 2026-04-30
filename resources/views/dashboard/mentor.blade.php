@@ -78,7 +78,9 @@
                                             {{ strtoupper(substr($submission->user->name, 0, 1)) }}
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="font-bold text-stitch-primary text-sm leading-tight">{{ $submission->user->name }}</p>
+                                            <a href="{{ route('profile.show', $submission->user) }}" class="hover:underline">
+                                                <p class="font-bold text-stitch-primary text-sm leading-tight">{{ $submission->user->name }}</p>
+                                            </a>
                                             <p class="text-xs text-stitch-on-surface-variant truncate">{{ $submission->challenge->title ?? 'Reto' }}</p>
                                             <p class="text-xs text-stitch-on-surface-variant mt-0.5">{{ $submission->created_at->diffForHumans() }}</p>
                                         </div>
@@ -115,7 +117,9 @@
                                             {{ strtoupper(substr($submission->user->name, 0, 1)) }}
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="font-bold text-stitch-primary text-sm">{{ $submission->user->name }}</p>
+                                            <a href="{{ route('profile.show', $submission->user) }}" class="hover:underline">
+                                                <p class="font-bold text-stitch-primary text-sm">{{ $submission->user->name }}</p>
+                                            </a>
                                             <p class="text-xs text-stitch-on-surface-variant truncate">{{ $submission->challenge->title ?? 'Reto' }}</p>
                                         </div>
                                     </div>

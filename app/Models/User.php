@@ -26,6 +26,12 @@ class User extends Authenticatable
         'user_type',
         'is_suspended',
         'profile_photo',
+        'school',
+        'age',
+        'bio',
+        'is_profile_complete',
+        'username',
+        'is_public',
     ];
 
     /**
